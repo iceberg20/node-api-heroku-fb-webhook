@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var fs = require('fs');
 
+var s = require("./math");
 
 //App init
 var app = express();
@@ -16,6 +17,8 @@ var getTarefas = function (req, res){
 
   res.send(JSON.stringify(dados));
 };
+
+console.log(s(2,3));
 
 //Serviços da API
 app.get('/tarefas', getTarefas);
