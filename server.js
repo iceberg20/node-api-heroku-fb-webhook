@@ -6,6 +6,12 @@ var fs = require('fs');
 
 var s = require("./math");
 
+var http = require('http');
+http.createServer(function(req,res){
+  res.end("aew");
+}).listen(4001);
+console.log("First server running on 4001");
+
 //App init
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -38,7 +44,7 @@ app.delete('/', (req, res) => {
 
 //Porta padrão da aplicação
 app.listen(3000, function (){
-	console.log('Alive listening on port 3000!');
+	console.log('Second server listening on port 3000!');
 });
 
 
