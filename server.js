@@ -40,7 +40,7 @@ app.delete('/', (req, res) => {
 });
 
 //Porta padrão da aplicação
-app.listen(3000, function (){
+app.listen(PORT, function (){
 	console.log('Second server listening on port 3000!');
 });
 
