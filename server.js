@@ -7,10 +7,6 @@ var fs = require('fs');
 var s = require("./math");
 
 var http = require('http');
-http.createServer(function(req,res){
-  res.end("aew");
-}).listen(4001);
-console.log("First server running on 4001");
 
 //App init
 var app = express();
@@ -18,13 +14,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors()); 
 
+app.use('/static', express.static('public'));
+
 var getTarefas = function (req, res){
   var dados = {status: "ok", app: "running"};
 
   res.send(JSON.stringify(dados));
 };
-
-console.log(s(2,3));
 
 //Serviços da API
 app.get('/tarefas', getTarefas);
