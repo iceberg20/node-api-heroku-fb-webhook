@@ -26,6 +26,10 @@ var getTarefas = function (req, res){
 //Serviços da API
 app.get('/tarefas', getTarefas);
 
+app.get('/version', (req, res) => {
+  return res.send('1');
+});
+
 app.get('/', (req, res) => {
   return res.send('Received a GET HTTP method');
 });
@@ -46,11 +50,15 @@ app.get('/getName',function (req,res){
 
 app.post('/getMovies',function (request,response)  {
   response.setHeader('Content-Type', 'application/json');
+
+  
   response.send(JSON.stringify({
     "speech" : "speech do webhook",
     "displayText" : "displayText"
   })); 
 });
+
+
 
 
 //Porta padrão da aplicação
