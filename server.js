@@ -58,7 +58,7 @@ app.post('/getMovies',function (request,response)  {
   })); 
 });
 
-restService.post("/echo", function(req, res) {
+app.post("/echo", function(req, res) {
   var speech =
     req.body.queryResult &&
     req.body.queryResult.parameters &&
