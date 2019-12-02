@@ -60,6 +60,10 @@ app.post('/getMovies',function (request,response)  {
 });
 
 app.post("/echo", function(req, res) {
+  console.log("##### Req ######");
+  console.log(req);
+  console.log("##### Req Body ######");
+  console.log(req.body);
   var speech =
     req.body.queryResult &&
     req.body.queryResult.parameters &&
