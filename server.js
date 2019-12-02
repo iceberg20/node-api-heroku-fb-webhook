@@ -59,6 +59,9 @@ app.post('/getMovies',function (request,response)  {
 });
 
 app.post("/echo", function(req, res) {
+  print("##################################################################################");
+  print("LOG")
+  print("##################################################################################");
   var speech =
     req.body.queryResult &&
     req.body.queryResult.parameters &&
