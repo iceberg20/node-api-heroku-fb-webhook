@@ -64,9 +64,9 @@ app.post("/webhook", function(req, res) {
   var speech = "";
   if (intent_name == "echo") {
     speech = "echo";
-  } else if(intent_name = "T004-webhook1") {
+  } else if(intent_name == "T004-webhook1") {
     speech = "T004-webhook1";
-  } else if (intent_name = "T005-hook"){
+  } else if (intent_name == "T005-hook"){
     speech = "T005-hook";
   } else {
     speech = "Erro webhook!"
