@@ -60,20 +60,17 @@ app.post('/getMovies',function (request,response)  {
 });
 
 app.post("/webhook", function(req, res) {
-  console.log("##### Req ######");
-  console.log(req);
-  console.log("##### Req Body ######");
-  console.log(req.body);
   var intent_name = req.body.queryResult.intent.displayName;
-  console.log("##### Intent Name ######");
-  console.log(intent_name);
-
-  var speech =
-    req.body.queryResult &&
-    req.body.queryResult.parameters &&
-    req.body.queryResult.parameters.echoText
-      ? req.body.queryResult.parameters.echoText
-      : "Seems like some problem. Speak again.";
+  var speech = "";
+  if (intent_name == "echo") {
+    speech = "echo";
+  } else if(intent_name = "T004-webhook1") {
+    speech = "T004-webhook1";
+  } else if (intent_name = "T005-webhook2"){
+    speech = "T005-webhook2";
+  } else {
+    speech = "Erro webhook!"
+  }
   
   var speechResponse = {
     google: {
@@ -89,6 +86,14 @@ app.post("/webhook", function(req, res) {
       }
     }
   };
+
+    //Logs
+    console.log("##### Req ######");
+    console.log(req);
+    console.log("##### Req Body ######");
+    console.log(req.body);
+    console.log("##### Intent Name ######");
+    console.log(intent_name);
   
   return res.json({
     payload: speechResponse,
