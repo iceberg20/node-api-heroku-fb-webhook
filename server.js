@@ -19,6 +19,7 @@ app.use('/static', express.static('public'));
 
 var getTarefas = function (req, res){
   var dados = {status: "ok", app: "running"};
+  console.log(" # Console.log()");
 
   res.send(JSON.stringify(dados));
 };
@@ -59,9 +60,6 @@ app.post('/getMovies',function (request,response)  {
 });
 
 app.post("/echo", function(req, res) {
-  print("##################################################################################");
-  print("LOG")
-  print("##################################################################################");
   var speech =
     req.body.queryResult &&
     req.body.queryResult.parameters &&
