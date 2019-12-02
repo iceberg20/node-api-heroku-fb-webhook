@@ -64,6 +64,9 @@ app.post("/webhook", function(req, res) {
   console.log(req);
   console.log("##### Req Body ######");
   console.log(req.body);
+  var intent_name = req.queryResult.intent.displayName;
+  console.log("##### Intent Name ######");
+  console.log(intent_name);
 
   var speech =
     req.body.queryResult &&
