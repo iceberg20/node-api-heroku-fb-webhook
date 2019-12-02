@@ -59,11 +59,14 @@ app.post('/getMovies',function (request,response)  {
   })); 
 });
 
-app.post("/echo", function(req, res) {
+app.post("/webhook", function(req, res) {
   console.log("##### Req ######");
   console.log(req);
   console.log("##### Req Body ######");
   console.log(req.body);
+  console.log("##### Intent Name ######");
+  console.log(req.body.intent.displayName);
+
   var speech =
     req.body.queryResult &&
     req.body.queryResult.parameters &&
