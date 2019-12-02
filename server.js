@@ -66,12 +66,12 @@ app.post("/webhook", function(req, res) {
     speech = "echo";
   } else if(intent_name = "T004-webhook1") {
     speech = "T004-webhook1";
-  } else if (intent_name = "T005-webhook2"){
-    speech = "T005-webhook2";
+  } else if (intent_name = "T005-hook"){
+    speech = "T005-hook";
   } else {
     speech = "Erro webhook!"
   }
-  
+
   var speechResponse = {
     google: {
       expectUserResponse: true,
