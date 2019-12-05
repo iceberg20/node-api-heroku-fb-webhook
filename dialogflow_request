@@ -1,0 +1,17 @@
+{
+	responseId: 'c52cc8b3-3972-4a13-bff3-3c8d55ba7bcd-9cc28bb4',
+	queryResult: {
+	queryText: 'topreated',
+	parameters: { echoText: 'topreated' },
+	allRequiredParamsPresent: true,
+	fulfillmentMessages: [ [Object] ],
+	intent: {
+	name: 'projects/sce-mobile-a1559/agent/intents/32595c71-aa68-43ca-aaf5-d524f4b22f50',
+	displayName: 'echo'
+	},
+	intentDetectionConfidence: 0.3,
+	languageCode: 'pt-br'
+	},
+	originalDetectIntentRequest: { payload: {} },
+	session: 'projects/sce-mobile-a1559/agent/sessions/0e92facf-8c94-e3dc-79be-19ec66770fad'
+}
