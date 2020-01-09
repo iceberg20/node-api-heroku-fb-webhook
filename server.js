@@ -9,11 +9,17 @@ var s = require("./math");
 
 var http = require('http');
 
+
+
+
 //App init
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors()); 
+
+// set the view engine to ejs
+app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
@@ -31,8 +37,19 @@ app.get('/version', (req, res) => {
   return res.send('1');
 });
 
-app.get('/', (req, res) => {
-  return res.send('Received a GET HTTP method');
+// index page 
+app.get('/', function(req, res) {
+    var drinks = [
+        { name: 'Bloody Mary', drunkness: 3 },
+        { name: 'Martini', drunkness: 5 },
+        { name: 'Scotch', drunkness: 10 }
+    ];
+    var tagline = "EJS adicionaod com sucesso";
+
+    res.render('pages/index', {
+        drinks: drinks,
+        tagline: tagline
+    });
 });
 app.post('/', (req, res) => {
   return res.send('Received a POST HTTP method');
