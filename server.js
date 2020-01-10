@@ -9,9 +9,6 @@ var s = require("./math");
 
 var http = require('http');
 
-
-
-
 //App init
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
