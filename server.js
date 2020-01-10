@@ -3,6 +3,7 @@ var PORT = process.env.PORT || 3000;
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var request = require('request')
 var fs = require('fs');
 
 var s = require("./math");
