@@ -32,7 +32,7 @@ var getTarefas = function (req, res){
 app.get('/tarefas', getTarefas);
 
 app.get('/version', (req, res) => {
-  return res.send('2');
+  return res.send('3');
 });
 
 // for Facebook verification
@@ -54,6 +54,7 @@ app.post('/webhook/', function (req, res) {
         sender = event.sender.id
         if (event.message && event.message.text) {
             text = event.message.text
+            console.log(text);
             if ( text == "Iniciar acompanhamento" || text == "cd") {
               sendTextMessage(sender, "Acompanhamento iniciado");
             } else {
