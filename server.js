@@ -32,7 +32,7 @@ var getTarefas = function (req, res){
 app.get('/tarefas', getTarefas);
 
 app.get('/version', (req, res) => {
-  return res.send('1');
+  return res.send('2');
 });
 
 // for Facebook verification
