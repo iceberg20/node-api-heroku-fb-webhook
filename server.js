@@ -33,9 +33,9 @@ app.get('/heroku_db', (req, res) => {
 client.connect();
   client.query('select * from teste_table', (err, res) => {
     if (err) throw err;
+    saida = JSON.stringify(res.rows[0]);
     for (let row of res.rows) {
       console.log(JSON.stringify(row));
-      saida = JSON.stringify(row);
     }
     client.end();
   });
@@ -52,7 +52,7 @@ var getTarefas = function (req, res){
 //Serviços da API
 app.get('/tarefas', getTarefas);
 app.get('/version', (req, res) => {
-  return res.send('4');
+  return res.send('5');
 });
 
 // for Facebook verification
