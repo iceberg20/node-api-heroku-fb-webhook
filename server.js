@@ -5,6 +5,12 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var request = require('request')
 var fs = require('fs');
+const { Client } = require('pg');
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,  
+  ssl: true,
+});
+
 
 var s = require("./math");
 
@@ -21,6 +27,19 @@ app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
+
+app.get('/heroku_db', (req, res) => {
+client.connect();
+  client.query('select * from teste_table', (err, res) => {
+    if (err) throw err;
+    for (let row of res.rows) {
+      console.log(JSON.stringify(row));
+    }
+    client.end();
+  });
+  res.send('db');
+});
+
 var getTarefas = function (req, res){
   var dados = {status: "ok", app: "running"};
   console.log(" # Console.log()");
@@ -30,7 +49,6 @@ var getTarefas = function (req, res){
 
 //Serviços da API
 app.get('/tarefas', getTarefas);
-
 app.get('/version', (req, res) => {
   return res.send('3');
 });
