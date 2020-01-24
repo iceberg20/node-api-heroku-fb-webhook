@@ -39,7 +39,7 @@ client.connect();
     }
     client.end();
   });
-  res.send(saida);
+  res.send("string");
 });
 
 var getTarefas = function (req, res){
@@ -52,7 +52,7 @@ var getTarefas = function (req, res){
 //Serviços da API
 app.get('/tarefas', getTarefas);
 app.get('/version', (req, res) => {
-  return res.send('7');
+  return res.send('8');
 });
 
 // for Facebook verification
