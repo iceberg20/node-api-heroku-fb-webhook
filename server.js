@@ -52,7 +52,7 @@ var getTarefas = function (req, res){
 //Serviços da API
 app.get('/tarefas', getTarefas);
 app.get('/version', (req, res) => {
-  return res.send('6');
+  return res.send('7');
 });
 
 // for Facebook verification
