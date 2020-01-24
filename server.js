@@ -29,15 +29,17 @@ app.use('/static', express.static('public'));
 
 
 app.get('/heroku_db', (req, res) => {
+  let saida ="";
 client.connect();
   client.query('select * from teste_table', (err, res) => {
     if (err) throw err;
     for (let row of res.rows) {
       console.log(JSON.stringify(row));
+      saida = JSON.stringify(row);
     }
     client.end();
   });
-  res.send('db');
+  res.send(saida);
 });
 
 var getTarefas = function (req, res){
