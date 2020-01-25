@@ -29,8 +29,9 @@ app.use('/static', express.static('public'));
 
 
 app.get('/heroku_db', (req, res) => {
-  let saida ="";
+let saida ="";
 client.connect();
+ try{
   client.query('select * from teste_table', (err, res) => {
     if (err) throw err;
     saida = res.rows;
@@ -39,6 +40,10 @@ client.connect();
     }
     client.end();
   });
+ }
+  catch(e){
+    console.log(e);
+  }
   res.send("string");
 });
 
@@ -52,7 +57,7 @@ var getTarefas = function (req, res){
 //Serviços da API
 app.get('/tarefas', getTarefas);
 app.get('/version', (req, res) => {
-  return res.send('8');
+  return res.send('9');
 });
 
 // for Facebook verification
@@ -79,10 +84,7 @@ app.post('/webhook/', function (req, res) {
               sendTextMessage(sender, "Acompanhamento iniciado");
             } else {
               sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
-            }
-
-
-            
+            }            
         }
         if (event.postback) {
             text = JSON.stringify(event.postback)
