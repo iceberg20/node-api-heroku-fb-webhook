@@ -11,9 +11,6 @@ const client = new Client({
   ssl: true,
 });
 
-
-var s = require("./math");
-
 var http = require('http');
 
 //App init
@@ -47,15 +44,6 @@ client.connect();
   res.send("string");
 });
 
-var getTarefas = function (req, res){
-  var dados = {status: "ok", app: "running"};
-  console.log(" # Console.log()");
-
-  res.send(JSON.stringify(dados));
-};
-
-//Serviços da API
-app.get('/tarefas', getTarefas);
 app.get('/version', (req, res) => {
   return res.send('9');
 });
@@ -68,10 +56,8 @@ app.get('/webhook/', function (req, res) {
     res.send('Error, wrong token')
 });
 
-// API End Point - added by Stefan
-
+// API End Point 
 app.post('/webhook/', function (req, res) {
-  console.log("#######################  Webhook ##################");
   console.log(req);
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
@@ -122,44 +108,10 @@ function sendTextMessage(sender, text) {
 
 // index page 
 app.get('/', function(req, res) {
-    var drinks = [
-        { name: 'Bloody Mary', drunkness: 3 },
-        { name: 'Martini', drunkness: 5 },
-        { name: 'Scotch', drunkness: 10 }
-    ];
-    var tagline = "EJS adicionaod com sucesso";
-
-    res.render('pages/index', {
-        drinks: drinks,
-        tagline: tagline
-    });
-});
-app.post('/', (req, res) => {
-  return res.send('Received a POST HTTP method');
-});
-app.put('/', (req, res) => {
-  return res.send('Received a PUT HTTP method');
-});
-app.delete('/', (req, res) => {
-  return res.send('Received a DELETE HTTP method');
+    res.render('pages/index');
 });
 
-//Webhook
-app.get('/getName',function (req,res){
-  res.send('Swarup Bam');
-});
-
-app.post('/getMovies',function (request,response)  {
-  response.setHeader('Content-Type', 'application/json');
-
-  
-  response.send(JSON.stringify({
-    "speech" : "speech do webhook",
-    "displayText" : "displayText"
-  })); 
-});
-
-app.post("/webhook_old", function(req, res) {
+app.post("/webhook_select_intent", function(req, res) {
   var intent_name = req.body.queryResult.intent.displayName;
   var speech = "";
   if (intent_name == "echo") {
