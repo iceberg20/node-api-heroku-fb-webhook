@@ -24,6 +24,27 @@ app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
+//teste new table usuario
+app.get('/db_teste', (req, res) => {
+let saida ="";
+client.connect();
+ try{
+  client.query('select * from usuario', (err, res) => {
+    if (err) throw err;
+    saida = res.rows;
+    for (let row of res.rows) {
+      console.log(JSON.stringify(row));
+    }
+    client.end();
+  });
+ }
+  catch(e){
+    console.log(e);
+  }
+  res.send("string");
+});
+
+
 
 app.get('/heroku_db', (req, res) => {
 let saida ="";
@@ -45,7 +66,7 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('10');
+  return res.send('11');
 });
 
 // for Facebook verification
