@@ -45,7 +45,7 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('9');
+  return res.send('10');
 });
 
 // for Facebook verification
