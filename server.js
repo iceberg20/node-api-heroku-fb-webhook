@@ -13,7 +13,7 @@ const client = new Client({
 });
 // DB poll config
 const { Pool } = require('pg');
-const poll = new Pool({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
@@ -65,7 +65,7 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('13');
+  return res.send('14');
 });
 
 // for Facebook verification
