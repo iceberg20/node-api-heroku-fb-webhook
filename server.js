@@ -12,8 +12,8 @@ const client = new Client({
   ssl: true,
 });
 // DB poll config
-const { Poll } = require('pg');
-const poll = new Poll({
+const { Pool } = require('pg');
+const poll = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
@@ -36,8 +36,8 @@ app.get('/db_teste', (req, res) => {
 let saida ="";
 client.connect();
  try{
-  const pclient = await pool.connect();
-  const result = await pclient.query('select * from usuario');
+  const pclient =  pool.connect();
+  const result =  pclient.query('select * from usuario');
   const results = {'results':(result) ? results.rows:null};
   res.send(JSON.stringify(results)); }
   catch(e){
