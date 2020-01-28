@@ -5,10 +5,17 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var request = require('request')
 var fs = require('fs');
+// DB client config
 const { Client } = require('pg');
 const client = new Client({
   connectionString: process.env.DATABASE_URL,  
   ssl: true,
+});
+// DB poll config
+const { Poll } = require('pg');
+const poll = new Poll({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
 });
 
 var http = require('http');
@@ -29,19 +36,13 @@ app.get('/db_teste', (req, res) => {
 let saida ="";
 client.connect();
  try{
-  client.query('select * from usuario', (err, res) => {
-    if (err) throw err;
-    saida = res.rows;
-    for (let row of res.rows) {
-      console.log(JSON.stringify(row));
-    }
-    client.end();
-  });
- }
+  const pclient = await pool.connect();
+  const result = await pclient.query('select * from usuario');
+  const results = {'results':(result) ? results.rows:null};
+  res.send(JSON.stringify(results)); }
   catch(e){
     console.log(e);
   }
-  res.send("string");
 });
 
 
