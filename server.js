@@ -33,8 +33,6 @@ app.use('/static', express.static('public'));
 
 //teste new table usuario
 app.get('/db_teste', (req, res) => {
-let saida ="";
-client.connect();
  try{
   const pclient =  pool.connect();
   const result =  pclient.query('select * from usuario');
@@ -67,7 +65,7 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('12');
+  return res.send('13');
 });
 
 // for Facebook verification
