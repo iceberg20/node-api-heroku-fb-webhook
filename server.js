@@ -50,11 +50,26 @@ app.get('/db_teste', (req, res) => {
   }
 });
 
-app.get('/db_teste2', (req, res) => {
-
-
+app.get('/add_user', (req, res) => {
+ try{
+  pool.connect((err, client, release) => {
+    if (err) {
+      return console.error('Error acquiring client', err.stack)
+    }
+    result = client.query("insert into usuario values(2,2,'cadastro','666','5555','advogado')", (err, result) => {
+      release()
+      if (err) {
+        return console.error('Error executing query', err.stack)
+      }
+      console.log(result.rows)
+    })
+  })  
+  res.send("funcionou!"); 
+}
+  catch(e){
+    console.log(e);
+  }
 });
-
 
 app.get('/heroku_db', (req, res) => {
 let saida ="";
