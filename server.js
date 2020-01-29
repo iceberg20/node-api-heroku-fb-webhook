@@ -1,18 +1,19 @@
 //Config Express
 var PORT = process.env.PORT || 3000;
+require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var request = require('request')
 var fs = require('fs');
+var str_con = process.env.STR_CON; 
 
 // DB poll config
 const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL || str_con,
   ssl: true
 });
-// connectionString: 'postgres://vkegyxllbdvkpj:8d3b276a8b4909d0dbd7e38e55dec984cc0a4bee507bfc31af8b5531c52cc43c@ec2-34-196-180-38.compute-1.amazonaws.com:5432/dcbpmhb975488c',
 
 var http = require('http');
 
