@@ -91,19 +91,19 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('16');
+  return res.send('18');
 });
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'trelabs_sj') {
+    if (req.query['hub.verify_token'] === 'trelabs_sj_novo') {
         res.send(req.query['hub.challenge'])
     }
     res.send('Error, wrong token')
 });
 
 // API End Point 
-app.post('/webhook2/', function (req, res) {
+app.post('/webhook/', function (req, res) {
   console.log(req);
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
