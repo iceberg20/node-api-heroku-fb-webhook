@@ -91,12 +91,12 @@ client.connect();
 });
 
 app.get('/version', (req, res) => {
-  return res.send('20');
+  return res.send('21');
 });
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'trelabs_sj_novo') {
+    if (req.query['hub.verify_token'] === 'trelabs_sj') {
         res.send(req.query['hub.challenge'])
     }
     res.send('Error, wrong token')
