@@ -115,7 +115,8 @@ app.post('/webhook/', function (req, res) {
             if ( text == "Iniciar acompanhamento" || text == "cd") {
               sendTextMessage(sender, "Acompanhamento iniciado");
             } else {
-              sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
+              sendTextMessage(sender,"Para mais informações ligue para (84) 3654-6000");
+              sendTextMessage(sender,"Ou vá até o TRE-RN no endereço Av. Rui Barbosa, 215 - Tirol, Natal - RN, 59015-290");              
             }            
         }
         if (event.postback) {
