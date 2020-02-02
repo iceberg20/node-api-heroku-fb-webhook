@@ -107,8 +107,7 @@ app.post('/webhook/', function (req, res) {
   
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
-
-        console.log(getPSID);
+        console.log(getPSID(req));
         if (event.message && event.message.text) {
             text = event.message.text
             console.log(text);
