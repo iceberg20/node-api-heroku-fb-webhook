@@ -107,9 +107,8 @@ app.post('/webhook/', function (req, res) {
   
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
-        event = req.body.entry[0].messaging[i]
-        sender = event.sender.id
-        console.log("# PSID: "+sender);
+
+        console.log(getPSID);
         if (event.message && event.message.text) {
             text = event.message.text
             console.log(text);
@@ -140,8 +139,15 @@ function setContext(contexto){
 
 //Para implementar
 function getPSID(req){
-  console.log("get PSID");
-  return "PSID";
+  try{
+    event = req.body.entry[0].messaging[i];
+    psid = event.sender.id;
+    console.log("get PSID");
+    return psid;
+  } catch(e){
+    console.log("error to get PSID");
+    console.log(e);
+  }
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
