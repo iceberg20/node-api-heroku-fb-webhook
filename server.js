@@ -139,14 +139,10 @@ function setContext(contexto){
 
 //Para implementar
 async function getPSID(req){
-  return new Promise((resolve, reject) => {
-    resolve(()=>{
       event = req.body.entry[0].messaging[i];
       psid = event.sender.id;
       console.log("get PSID");
       return psid;
-    });
-  });
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
