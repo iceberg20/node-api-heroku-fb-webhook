@@ -107,8 +107,9 @@ app.post('/webhook/', function (req, res) {
   
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
-        console.log(await (getPSID(req)));
-
+      event = req.body.entry[0].messaging[i];
+      psid = event.sender.id;
+      console.log("# deu certo #");
         if (event.message && event.message.text) {
             text = event.message.text
             console.log(text);
@@ -117,10 +118,7 @@ app.post('/webhook/', function (req, res) {
               sendTextMessage(sender, "Qual o seu nome?");
               let contexto = setContext("cadastro_nome");
               sendTextMessage(sender, contexto);
-            } else {
-              sendTextMessage(sender,"Para mais informações ligue para (84) 3654-6000");
-              sendTextMessage(sender,"Ou vá até o TRE-RN no endereço Av. Rui Barbosa, 215 - Tirol, Natal - RN, 59015-290");              
-            }            
+            }          
         }
         if (event.postback) {
             text = JSON.stringify(event.postback)
@@ -135,18 +133,6 @@ app.post('/webhook/', function (req, res) {
 function setContext(contexto){
   console.log("set_context= "+contexto);
   return contexto;
-}
-
-//Para implementar
-async function getPSID(req){
-  return new Promise((resolve, reject) => {
-    resolve(()=>{
-      event = req.body.entry[0].messaging[i];
-      psid = event.sender.id;
-      console.log("get PSID");
-      return psid;
-    });
-  });
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
