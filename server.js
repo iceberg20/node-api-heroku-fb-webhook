@@ -104,7 +104,11 @@ app.get('/webhook/', function (req, res) {
 
 // API End Point 
 app.post('/webhook/', function (req, res) {
-  
+  console.log("##########################");
+  console.log("Entrou no webhook");
+  console.log("##########################");
+  console.log(getPSID(req));
+
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
       event = req.body.entry[0].messaging[i];
@@ -133,6 +137,12 @@ app.post('/webhook/', function (req, res) {
 function setContext(contexto){
   console.log("set_context= "+contexto);
   return contexto;
+}
+
+function getPSID(req){
+  let msg = req.body.entry[0].messaging[0];
+  let psid = msg.sender.id;
+  return psid;
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
