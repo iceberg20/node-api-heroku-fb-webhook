@@ -139,7 +139,7 @@ function setContext(contexto){
   return contexto;
 }
 
-//change
+//chang
 function getPSID(req){
   let msg = req.body.entry[0].messaging[0];
   let psid = msg.sender.id;
