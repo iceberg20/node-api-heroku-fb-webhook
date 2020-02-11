@@ -102,44 +102,7 @@ app.get('/webhook/', function (req, res) {
     res.send('Error, wrong token')
 });
 
-// API End Point 
-app.post('/webhook-off/', function (req, res) {
-  console.log("##########################");
-  console.log("Entrou no webhook");
-  console.log("##########################");
-  let opsid = getPSID(req);
-  console.log(opsid);
-  console.log(getContext(opsid));
-  
-    messaging_events = req.body.entry[0].messaging
-    for (i = 0; i < messaging_events.length; i++) {
-      event = req.body.entry[0].messaging[i];
-      psid = event.sender.id;
-      console.log("# deu certo #");
-        if (event.message && event.message.text) {
-            text = event.message.text
-            console.log(text);
-            if ( text == "Iniciar acompanhamento" || text == "cd") {
-              sendTextMessage(sender, "Ok, primeiro preciso fazer o seu cadastro");
-              sendTextMessage(sender, "Qual o seu nome?");
-              let contexto = setContext("cadastro_nome");
-              sendTextMessage(sender, contexto);
-            }          
-        }
-        if (event.postback) {
-            text = JSON.stringify(event.postback)
-            sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-            continue
-        }
-    }
-    res.sendStatus(200)
-});
 
-//Para implementar
-function setContext(contexto){
-  console.log("set_context= "+contexto);
-  return contexto;
-}
 
 function getPSID(req){
   let msg = req.body.entry[0].messaging[0];
@@ -151,8 +114,8 @@ async function getContext(psid){
   try{
     let cliente = await pool.connect();
     let resultado = await cliente.query("select contexto from usuario where psid="+psid);
-    console.log(resultado.rows);
-    return resultado.rows.contexto;
+    console.log(resultado.rows[0].contexto);
+    return resultado.rows[0].contexto;
   } catch(e){
       console.log(e);
       return [];
@@ -189,58 +152,11 @@ app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
-app.post("/webhook_select_intent", function(req, res) {
-  var intent_name = req.body.queryResult.intent.displayName;
-  var speech = "";
-  if (intent_name == "echo") {
-    speech = "echo";
-  } else if(intent_name == "T004-webhook1") {
-    speech = "T004-webhook1";
-  } else if (intent_name == "T005-hook"){
-    speech = "T005-hook";
-  } else {
-    speech = "Erro webhook!"
-  }
-
-  var speechResponse = {
-    google: {
-      expectUserResponse: true,
-      richResponse: {
-        items: [
-          {
-            simpleResponse: {
-              textToSpeech: speech
-            }
-          }
-        ]
-      }
-    }
-  };
-
-    //Logs
-    console.log("##### Req ######");
-    console.log(req);
-    console.log("##### Req Body ######");
-    console.log(req.body);
-    console.log("##### Intent Name ######");
-    console.log(intent_name);
-  
-  return res.json({
-    payload: speechResponse,
-    //data: speechResponse,
-    fulfillmentText: speech,
-    speech: speech,
-    displayText: speech,
-    source: "webhook-echo-sample"
-  });
-});
-
 //Métodos de teste
 app.get('/teste/getcontext', async function (req, res) {
   let psid = req.query.psid;
   console.log("param "+psid);
   let out = await getContext(psid);
-  await sleep(1000);
   console.log("### OUT ###: "+out);
 
   res.send(out);
