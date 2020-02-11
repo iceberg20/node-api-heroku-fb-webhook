@@ -147,29 +147,16 @@ function getPSID(req){
   return psid;
 }
 
-
-
-function getContext(psid){
+async function getContext(psid){
   try{
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      result = client.query("select contexto from usuario where psid="+psid, (err, result) => {
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })  
-    res.send("funcionou!"); 
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("select contexto from usuario where psid="+psid);
+    console.log(resultado.rows);
+    return resultado.rows.contexto;
   } catch(e){
       console.log(e);
+      return [];
   }
-
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
@@ -249,11 +236,21 @@ app.post("/webhook_select_intent", function(req, res) {
 });
 
 //Métodos de teste
-app.get('/teste/getcontext/:psid', function (req, res) {
-  let out = getContext(req.param.psid);
+app.get('/teste/getcontext', async function (req, res) {
+  let psid = req.query.psid;
+  console.log("param "+psid);
+  let out = await getContext(psid);
+  await sleep(1000);
+  console.log("### OUT ###: "+out);
+
   res.send(out);
-  console.log(out);
 });
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}  
 
 //Testes
 app.post('/webhook/', function (req, res) {
@@ -280,6 +277,13 @@ app.post('/webhook/', function (req, res) {
     res.sendStatus(200)
 });
 
+
+app.get('/find_psid/:psid', function (req, res){
+  find_psid()
+  console.log("aew");
+  res.status('200').send({card: 'card'});
+});
+
 function find_psid(){
   try{
     pool.connect((err, client, release) => {
@@ -296,7 +300,7 @@ function find_psid(){
         console.log(result.rows)
       })
     })  
-    res.send("funcionou!"); 
+    res.send("funcionou!");
   } catch(e){
       console.log(e);
   }
