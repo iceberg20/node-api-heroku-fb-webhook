@@ -103,12 +103,14 @@ app.get('/webhook/', function (req, res) {
 });
 
 // API End Point 
-app.post('/webhook/', function (req, res) {
+app.post('/webhook-off/', function (req, res) {
   console.log("##########################");
   console.log("Entrou no webhook");
   console.log("##########################");
-  console.log(getPSID(req));
-
+  let opsid = getPSID(req);
+  console.log(opsid);
+  console.log(getContext(opsid));
+  
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
       event = req.body.entry[0].messaging[i];
@@ -139,11 +141,35 @@ function setContext(contexto){
   return contexto;
 }
 
-//chang
 function getPSID(req){
   let msg = req.body.entry[0].messaging[0];
   let psid = msg.sender.id;
   return psid;
+}
+
+
+
+function getContext(psid){
+  try{
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      result = client.query("select contexto from usuario where psid="+psid, (err, result) => {
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })  
+    res.send("funcionou!"); 
+  } catch(e){
+      console.log(e);
+  }
+
 }
 
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
@@ -222,9 +248,59 @@ app.post("/webhook_select_intent", function(req, res) {
   });
 });
 
+//Métodos de teste
+app.get('/teste/getcontext/:psid', function (req, res) {
+  let out = getContext(req.param.psid);
+  res.send(out);
+  console.log(out);
+});
 
+//Testes
+app.post('/webhook/', function (req, res) {
+  console.log("#######################  Webhook ##################");
+    messaging_events = req.body.entry[0].messaging
+    for (i = 0; i < messaging_events.length; i++) {
+        event = req.body.entry[0].messaging[i]
+        sender = event.sender.id
+        if (event.message && event.message.text) {
+            text = event.message.text
+            console.log(text);
+            if ( text == "Iniciar acompanhamento" || text == "cd") {
+              sendTextMessage(sender, "Acompanhamento iniciado");
+            } else {
+              sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
+            }            
+        }
+        if (event.postback) {
+            text = JSON.stringify(event.postback)
+            sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+            continue
+        }
+    }
+    res.sendStatus(200)
+});
 
-
+function find_psid(){
+  try{
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      result = client.query("select contexto from usuario where psid="+psid, (err, result) => {
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })  
+    res.send("funcionou!"); 
+  } catch(e){
+      console.log(e);
+  }
+}
 
 //Porta padrão da aplicação
 app.listen(PORT, function (){
