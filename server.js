@@ -7,7 +7,7 @@ var cors = require('cors');
 var request = require('request');
 var fs = require('fs');
 var http = require('http');
-var str_con = process.env.STR_CON; 
+var str_con = process.env.STR_CON;
 
 // DB poll config
 const { Pool } = require('pg');
@@ -18,58 +18,58 @@ const pool = new Pool({
 
 //App init
 var app = express();
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors()); 
+app.use(cors());
 
 app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
 app.get('/add_user', (req, res) => {
- try{
-  pool.connect((err, client, release) => {
-    if (err) {
-      return console.error('Error acquiring client', err.stack)
-    }
-    result = client.query("insert into usuario values(2,2,'cadastro','666','5555','advogado')", (err, result) => {
-      release()
+  try {
+    pool.connect((err, client, release) => {
       if (err) {
-        return console.error('Error executing query', err.stack)
+        return console.error('Error acquiring client', err.stack)
       }
-      console.log(result.rows)
+      result = client.query("insert into usuario values(2,2,'cadastro','666','5555','advogado')", (err, result) => {
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+        }
+        console.log(result.rows)
+      })
     })
-  })  
-  res.send("funcionou!"); 
-}
-  catch(e){
+    res.send("funcionou!");
+  }
+  catch (e) {
     console.log(e);
   }
 });
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'trelabs_sj') {
-        res.send(req.query['hub.challenge'])
-    }
-    res.send('Error, wrong token')
+  if (req.query['hub.verify_token'] === 'trelabs_sj') {
+    res.send(req.query['hub.challenge'])
+  }
+  res.send('Error, wrong token')
 });
 
-function getPSID(req){
+function getPSID(req) {
   let msg = req.body.entry[0].messaging[0];
   let psid = msg.sender.id;
   return psid;
 }
 
-async function getContext(psid){
-  try{
+async function getContext(psid) {
+  try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("select contexto from usuario where psid="+psid);
+    let resultado = await cliente.query("select contexto from usuario where psid=" + psid);
     console.log(resultado.rows[0].contexto);
     return resultado.rows[0].contexto;
-  } catch(e){
-      console.log(e);
-      return [];
+  } catch (e) {
+    console.log(e);
+    return [];
   }
 }
 
@@ -78,72 +78,74 @@ var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYT
 // function to echo back messages - added by Stefan
 
 function sendTextMessage(sender, text) {
-    messageData = {
-        text:text
+  messageData = {
+    text: text
+  }
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: token },
+    method: 'POST',
+    json: {
+      recipient: { id: sender },
+      message: messageData,
     }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
+  }, function (error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
 }
 
 // index page 
-app.get('/', function(req, res) {
-    res.render('pages/index');
+app.get('/', function (req, res) {
+  res.render('pages/index');
 });
 
-//Métodos de teste
 app.get('/teste/getcontext', async function (req, res) {
   let psid = req.query.psid;
-  console.log("param "+psid);
+  console.log("param " + psid);
   let out = await getContext(psid);
-  console.log("### OUT ###: "+out);
+  if(out==[]){
+
+  }
+  console.log("### OUT ###: " + out);
 
   res.send(out);
 });
 
-
 app.post('/webhook/', function (req, res) {
-    messaging_events = req.body.entry[0].messaging
-    for (i = 0; i < messaging_events.length; i++) {
-        event = req.body.entry[0].messaging[i]
-        sender = event.sender.id
-        if (event.message && event.message.text) {
-            text = event.message.text
-            console.log(text);
-            if ( text == "Iniciar acompanhamento" || text == "cd") {
-              sendTextMessage(sender, "Acompanhamento iniciado");
-            } else {
-              sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
-            }            
-        }
-        if (event.postback) {
-            text = JSON.stringify(event.postback)
-            sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-            continue
-        }
+  messaging_events = req.body.entry[0].messaging
+  for (i = 0; i < messaging_events.length; i++) {
+    event = req.body.entry[0].messaging[i]
+    sender = event.sender.id
+    if (event.message && event.message.text) {
+      text = event.message.text
+      console.log(text);
+      if (text == "Iniciar acompanhamento" || text == "cd") {
+        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro");
+        sendTextMessage(sender, "Vi aqui que vc ainda não tem cadastro. Então vamos fazer fazer. Me infomr seu nome");
+      } else {
+        sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
+      }
     }
-    res.sendStatus(200)
+    if (event.postback) {
+      text = JSON.stringify(event.postback)
+      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token)
+      continue
+    }
+  }
+  res.sendStatus(200)
 });
 
-function find_psid(){
-  try{
+function find_psid() {
+  try {
     pool.connect((err, client, release) => {
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      result = client.query("select contexto from usuario where psid="+psid, (err, result) => {
+      result = client.query("select contexto from usuario where psid=" + psid, (err, result) => {
         release()
         if (err) {
           return console.error('Error executing query', err.stack)
@@ -152,14 +154,14 @@ function find_psid(){
         console.log(" # O resultado pode estar vazio #");
         console.log(result.rows)
       })
-    })  
+    })
     res.send("funcionou!");
-  } catch(e){
-      console.log(e);
+  } catch (e) {
+    console.log(e);
   }
 }
 
 //Porta padrão da aplicação
-app.listen(PORT, function (){
-	console.log('Second server listening on port 3000!');
+app.listen(PORT, function () {
+  console.log('Second server listening on port 3000!');
 });
