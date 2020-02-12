@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var request = require('request');
 var fs = require('fs');
+var http = require('http');
 var str_con = process.env.STR_CON; 
 
 // DB poll config
@@ -15,40 +16,15 @@ const pool = new Pool({
   ssl: true
 });
 
-var http = require('http');
-
 //App init
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors()); 
 
-// set the view engine to ejs
 app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
-
-//teste new table usuario
-app.get('/db_teste', (req, res) => {
- try{
-  pool.connect((err, client, release) => {
-    if (err) {
-      return console.error('Error acquiring client', err.stack)
-    }
-    result = client.query('select * from usuario', (err, result) => {
-      release()
-      if (err) {
-        return console.error('Error executing query', err.stack)
-      }
-      console.log(result.rows)
-    })
-  });
-  res.send("funcionou!"); 
-}
-  catch(e){
-    console.log(e);
-  }
-});
 
 app.get('/add_user', (req, res) => {
  try{
@@ -71,29 +47,6 @@ app.get('/add_user', (req, res) => {
   }
 });
 
-app.get('/heroku_db', (req, res) => {
-let saida ="";
-client.connect();
- try{
-  client.query('select * from teste_table', (err, res) => {
-    if (err) throw err;
-    saida = res.rows;
-    for (let row of res.rows) {
-      console.log(JSON.stringify(row));
-    }
-    client.end();
-  });
- }
-  catch(e){
-    console.log(e);
-  }
-  res.send("string");
-});
-
-app.get('/version', (req, res) => {
-  return res.send('21');
-});
-
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
     if (req.query['hub.verify_token'] === 'trelabs_sj') {
@@ -101,8 +54,6 @@ app.get('/webhook/', function (req, res) {
     }
     res.send('Error, wrong token')
 });
-
-
 
 function getPSID(req){
   let msg = req.body.entry[0].messaging[0];
@@ -162,15 +113,8 @@ app.get('/teste/getcontext', async function (req, res) {
   res.send(out);
 });
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}  
 
-//Testes
 app.post('/webhook/', function (req, res) {
-  console.log("#######################  Webhook ##################");
     messaging_events = req.body.entry[0].messaging
     for (i = 0; i < messaging_events.length; i++) {
         event = req.body.entry[0].messaging[i]
@@ -191,13 +135,6 @@ app.post('/webhook/', function (req, res) {
         }
     }
     res.sendStatus(200)
-});
-
-
-app.get('/find_psid/:psid', function (req, res){
-  find_psid()
-  console.log("aew");
-  res.status('200').send({card: 'card'});
 });
 
 function find_psid(){
