@@ -115,8 +115,21 @@ app.get('/teste/getcontext', async function (req, res) {
   res.send(out);
 });
 
-app.post('/webhook/', function (req, res) {
+async function get_psid(req){
+  event = req.body.entry[0].messaging[0]
+  sender = event.sender.id
+  return sender;
+}
+
+//implementar
+async function save_psid(){
+  return "implementar";
+}
+
+app.post('/webhook/', async function (req, res) {
   messaging_events = req.body.entry[0].messaging
+  var psid = await get_psid(req);
+  console.log("# psid="+psid);
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i]
     sender = event.sender.id
@@ -124,8 +137,15 @@ app.post('/webhook/', function (req, res) {
       text = event.message.text
       console.log(text);
       if (text == "Iniciar acompanhamento" || text == "cd") {
-        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro");
-        sendTextMessage(sender, "Vi aqui que vc ainda não tem cadastro. Então vamos fazer fazer. Me infomr seu nome");
+        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro");        
+        console.log("param " + psid);
+        let context = await getContext(psid);
+        console.log("# contexo ="+context);
+        if(context=="cadastrado"){
+          sendTextMessage(sender, "Você já tem uma cadastro");      
+        } else  {
+          sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
+        }
       } else {
         sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
       }
