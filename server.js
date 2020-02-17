@@ -64,7 +64,7 @@ function getPSID(req) {
 async function getContext(psid) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("select contexto from usuario where psid=" + psid);
+    let resultado = await cliente.query("select contexto from usuario where psid='"+psid+"'");
     console.log(resultado.rows[0].contexto);
     return resultado.rows[0].contexto;
   } catch (e) {
@@ -103,27 +103,54 @@ app.get('/', function (req, res) {
   res.render('pages/index');
 });
 
-app.get('/teste/getcontext', async function (req, res) {
-  let psid = req.query.psid;
-  console.log("param " + psid);
-  let out = await getContext(psid);
-  if(out==[]){
-
-  }
-  console.log("### OUT ###: " + out);
-
-  res.send(out);
-});
-
 async function get_psid(req){
   event = req.body.entry[0].messaging[0]
   sender = event.sender.id
   return sender;
 }
 
-//implementar
-async function save_psid(){
-  return "implementar";
+async function cadastrar_usuario(psid){
+  try {
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      client.query("insert into public.usuario (psid, contexto) values ('"+psid+"','cadastro')", (err, result) => {
+      return "usuario_cadatrado_com_sucesso";
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function muda_context_usuario(psid, contexto){
+  try {
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      client.query("UPDATE public.usuario SET contexto = '+contexto+' WHERE psid="+psid, (err, result) => {
+      return "usuario_cadatrado_com_sucesso";
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 app.post('/webhook/', async function (req, res) {
@@ -141,10 +168,16 @@ app.post('/webhook/', async function (req, res) {
         console.log("param " + psid);
         let context = await getContext(psid);
         console.log("# contexo ="+context);
-        if(context=="cadastrado"){
+        if(context=="cadastro"){
           sendTextMessage(sender, "Você já tem uma cadastro");      
         } else  {
           sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
+          let cadastrado =  await cadastrar_usuario(psid);
+          if (cadastrado == "usuario_cadatrado_com_sucesso") {
+            sendTextMessage(sender, "Informe seu nome:");
+            let m_contexto = await muda_context_usuario(psid, 'cadastro');
+            console.log(m_contexto);
+          } 
         }
       } else {
         sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
