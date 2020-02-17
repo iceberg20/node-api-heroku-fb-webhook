@@ -66,6 +66,7 @@ async function getContext(psid) {
     let cliente = await pool.connect();
     let resultado = await cliente.query("select contexto from usuario where psid='"+psid+"'");
     console.log(resultado.rows[0].contexto);
+    console.log(psid);
     return resultado.rows[0].contexto;
   } catch (e) {
     console.log(e);
@@ -137,8 +138,31 @@ async function muda_context_usuario(psid, contexto){
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      client.query("UPDATE public.usuario SET contexto = '+contexto+' WHERE psid="+psid, (err, result) => {
-      return "usuario_cadatrado_com_sucesso";
+      let r = client.query("UPDATE public.usuario SET contexto = "+contexto+" WHERE psid='"+psid+"'", (err, result) => {
+      console.log("#update context"+r);
+        return "usuario_cadatrado_com_sucesso";
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function salva_nome(psid, nome){
+  try {
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid= '"+psid+"'", (err, result) => {
+      return "nome_salvo_com_sucesso";
         release()
         if (err) {
           return console.error('Error executing query', err.stack)
@@ -156,31 +180,37 @@ async function muda_context_usuario(psid, contexto){
 app.post('/webhook/', async function (req, res) {
   messaging_events = req.body.entry[0].messaging
   var psid = await get_psid(req);
-  console.log("# psid="+psid);
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i]
     sender = event.sender.id
     if (event.message && event.message.text) {
       text = event.message.text
-      console.log(text);
+
       if (text == "Iniciar acompanhamento" || text == "cd") {
         sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro");        
         console.log("param " + psid);
         let context = await getContext(psid);
         console.log("# contexo ="+context);
         if(context=="cadastro"){
-          sendTextMessage(sender, "Você já tem uma cadastro");      
+          sendTextMessage(sender, "Você já tem um cadastro");     
+          sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
         } else  {
-          sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
+          let w = await sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
           let cadastrado =  await cadastrar_usuario(psid);
-          if (cadastrado == "usuario_cadatrado_com_sucesso") {
             sendTextMessage(sender, "Informe seu nome:");
-            let m_contexto = await muda_context_usuario(psid, 'cadastro');
-            console.log(m_contexto);
-          } 
+            let m_contexto = await muda_context_usuario(psid, 'cadastro.nome');
+            console.log("# contexto(nome):"+m_contexto);         
         }
       } else {
-        sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
+        let context_nome = await getContext(psid);
+        if(context_nome == "cadastro.nome"){
+          let cad_nome = await salva_nome(psid, text);
+          if(cad_nome == "nome_salvo_com_sucesso"){
+            sendTextMessage(sender, "Ok, "+text+" já anotei seu nome");    
+            sendTextMessage(sender, "Qual seu número de da OAB? ");          
+          }
+        }
+        //sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
       }
     }
     if (event.postback) {
@@ -198,7 +228,7 @@ function find_psid() {
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      result = client.query("select contexto from usuario where psid=" + psid, (err, result) => {
+      result = client.query("select contexto from usuario where psid='"+psid+"'", (err, result) => {
         release()
         if (err) {
           return console.error('Error executing query', err.stack)
