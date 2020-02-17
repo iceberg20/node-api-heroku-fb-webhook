@@ -1,3 +1,16 @@
+//async await 
+app.get('/teste/getcontext', async function (req, res) {
+    let psid = req.query.psid;
+    console.log("param " + psid);
+    let out = await getContext(psid);
+    if(out==[]){
+  
+    }
+    console.log("### OUT ###: " + out);
+  
+    res.send(out);
+  });
+
 // API End Point 
 app.post('/webhook-off/', function (req, res) {
     console.log("##########################");
@@ -130,4 +143,7 @@ function sleep(ms) {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
-}  
+}
+
+//usando função sleep
+await sleep(1000);

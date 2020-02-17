@@ -26,27 +26,6 @@ app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
-app.get('/add_user', (req, res) => {
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      result = client.query("insert into usuario values(2,2,'cadastro','666','5555','advogado')", (err, result) => {
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-        }
-        console.log(result.rows)
-      })
-    })
-    res.send("funcionou!");
-  }
-  catch (e) {
-    console.log(e);
-  }
-});
-
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
   if (req.query['hub.verify_token'] === 'trelabs_sj') {
@@ -99,7 +78,6 @@ function sendTextMessage(sender, text) {
   })
 }
 
-// index page 
 app.get('/', function (req, res) {
   res.render('pages/index');
 });
@@ -195,7 +173,8 @@ app.post('/webhook/', async function (req, res) {
           sendTextMessage(sender, "Você já tem um cadastro");     
           sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
         } else  {
-          let w = await sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
+          await sleep(700);
+          sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
           let cadastrado =  await cadastrar_usuario(psid);
             sendTextMessage(sender, "Informe seu nome:");
             let m_contexto = await muda_context_usuario(psid, 'cadastro.nome');
@@ -222,27 +201,11 @@ app.post('/webhook/', async function (req, res) {
   res.sendStatus(200)
 });
 
-function find_psid() {
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      result = client.query("select contexto from usuario where psid='"+psid+"'", (err, result) => {
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
-    res.send("funcionou!");
-  } catch (e) {
-    console.log(e);
-  }
-}
+function sleep(ms) {
+  return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+  });
+}  
 
 //Porta padrão da aplicação
 app.listen(PORT, function () {
