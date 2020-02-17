@@ -165,15 +165,15 @@ app.post('/webhook/', async function (req, res) {
       text = event.message.text
 
       if (text == "Iniciar acompanhamento" || text == "cd") {
-        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro");        
+        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro"); 
+        await sleep(300);
         console.log("param " + psid);
         let context = await getContext(psid);
         console.log("# contexo ="+context);
         if(context=="cadastro"){
-          sendTextMessage(sender, "Você já tem um cadastro");     
+          sendTextMessage(sender, "Você já tem um cadastro \n "); 
           sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
-        } else  {
-          await sleep(700);
+        } else  {          
           sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
           let cadastrado =  await cadastrar_usuario(psid);
             sendTextMessage(sender, "Informe seu nome:");
