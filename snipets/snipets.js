@@ -1,3 +1,17 @@
+//promisses
+function send_msg(text){
+    return new Promisse( (resolve, reject) =>{
+      if (text != null){
+        sendTextMessage(sender, "Você já tem um cadastro");
+        resolver("msg_enviada:"+text);
+        console.log("#resolved #")
+      } else {
+        reject("msg_nao_enviada");
+        console.log("#rejected  #")
+      }
+    })
+  }
+  
 //async await 
 app.get('/teste/getcontext', async function (req, res) {
     let psid = req.query.psid;
