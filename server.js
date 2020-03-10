@@ -191,7 +191,7 @@ app.post('/cadastro', async (req, res)=>{
     if(context_nome == "cadastro"){
       text_response = "Você já possui um cadastro!";
     } else {
-      let cadastrado = await cadastrar_usuario_completo(psid, nome, num_oab, rf_oab);
+      //let cadastrado = await cadastrar_usuario_completo(psid);
       text_response = "Cadastrado com sucesso!";      
     }
  
