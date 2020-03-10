@@ -157,9 +157,16 @@ async function salva_nome(psid, nome){
 }
 
 app.post('/cadastro', (req, res)=>{
+  let nome = req.body.parameters.nome;
+  let num_oab = req.body.parameters.num_oab;
+  let uf_oab = req.body.parameters.rf_oab;
+  
   console.log("foi pro ff");
   console.log(req.body);  
-  res.json({status: "ok"});
+  return res.json({
+    fulfillmentText: "seu nome:"+nome,
+    source: 'api'
+  })
 });
 
 app.post('/webhook/', async function (req, res) {
