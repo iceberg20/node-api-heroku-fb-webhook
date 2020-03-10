@@ -185,7 +185,8 @@ app.post('/cadastro', async (req, res)=>{
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
-  var psid = get_psid(req);
+  var psid = await get_psid(req);
+  console.log("# PSID"+psid);
   let context_nome = getContext(psid);
     if(context_nome == "cadastro"){
       text_response = "Você já possui um cadastro!";
