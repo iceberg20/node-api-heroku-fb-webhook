@@ -111,6 +111,28 @@ async function cadastrar_usuario(psid){
   }
 }
 
+async function cadastrar_usuario_completo(psid){
+  try {
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob) values ('"+psid+"','cadastro',+)", (err, result) => {
+      return "usuario_cadatrado_com_sucesso";
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 async function muda_context_usuario(psid, contexto){
   try {
     pool.connect((err, client, release) => {
@@ -157,13 +179,23 @@ async function salva_nome(psid, nome){
 }
 
 app.post('/cadastro', (req, res)=>{
-  console.log(req.body.queryResult.parameters.nome); 
-  let nome = req.body.queryResult.parameters.nome;
-  
   console.log("foi pro ff");
+  console.log(req.body.queryResult.parameters);
+  let nome = req.body.queryResult.parameters.nome; 
+  let num_oab = req.body.queryResult.parameters.num_oab;
+  let rf_oab = req.body.queryResult.parameters.rf_oab;
+  let text_response = "";
+  var psid = get_psid(req);
+  let context_nome = getContext(psid);
+    if(context_nome == "cadastro"){
+      text_response = "Você já possui um cadastro!";
+    } else {
+      let cadastrado = await cadastrar_usuario_completo(psid, nome, num_oab, rf_oab);
+      text_response = "Cadastrado com sucesso!";      
+    }
  
   return res.json({
-    fulfillmentText: "seu nome:"+nome,
+    fulfillmentText: text_response,
     source: 'api'
   })
 });
