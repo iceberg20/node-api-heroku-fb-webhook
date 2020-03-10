@@ -158,6 +158,7 @@ async function salva_nome(psid, nome){
 
 app.post('/cadastro', (req, res)=>{
   console.log("foi pro ff");
+  console.log(req.body);  
   res.json({status: "ok"});
 });
 
