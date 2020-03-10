@@ -1,3 +1,11 @@
+
+app.get('/debug', (req,res)=>{
+    let a = 2;
+    let b = 3;
+    let sum = a + b;
+    res.json({soma:sum});
+  });
+
 //promisses
 function send_msg(text){
     return new Promisse( (resolve, reject) =>{

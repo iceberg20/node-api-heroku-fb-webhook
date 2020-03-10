@@ -28,7 +28,8 @@ app.use('/static', express.static('public'));
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-  if (req.query['hub.verify_token'] === 'trelabs_sj') {
+  let verify_token = req.query['hub.verify_token'];
+  if ( verify_token === 'trelabs_sj') {
     res.send(req.query['hub.challenge'])
   }
   res.send('Error, wrong token')
