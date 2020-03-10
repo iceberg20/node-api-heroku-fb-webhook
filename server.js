@@ -156,6 +156,11 @@ async function salva_nome(psid, nome){
   }
 }
 
+app.post('/cadastro', (req, res)=>{
+  console.log("foi pro ff");
+  res.json({status: "ok"});
+});
+
 app.post('/webhook/', async function (req, res) {
   messaging_events = req.body.entry[0].messaging
   var psid = await get_psid(req);
