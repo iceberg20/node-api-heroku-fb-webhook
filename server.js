@@ -117,7 +117,7 @@ async function cadastrar_usuario_completo(psid, num_oab, rf_oab){
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob) values ('"+psid+"','cadastro', '"+num_oab+"', '"+rf_oab+"')", (err, result) => {
+      client.query("insert into public.usuario (psid, contexto) values ('"+psid+"','cadastro')", (err, result) => {
       return "usuario_cadatrado_com_sucesso";
         release()
         if (err) {
