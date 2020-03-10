@@ -111,13 +111,13 @@ async function cadastrar_usuario(psid){
   }
 }
 
-async function cadastrar_usuario_completo(psid){
+async function cadastrar_usuario_completo(psid, num_oab, rf_oab){
   try {
     pool.connect((err, client, release) => {
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob) values ('"+psid+"','cadastro',+)", (err, result) => {
+      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob) values ('"+psid+"','cadastro', '"+num_oab+"', '"+rf_oab+"')", (err, result) => {
       return "usuario_cadatrado_com_sucesso";
         release()
         if (err) {
@@ -178,7 +178,7 @@ async function salva_nome(psid, nome){
   }
 }
 
-app.post('/cadastro', (req, res)=>{
+app.post('/cadastro', async (req, res)=>{
   console.log("foi pro ff");
   console.log(req.body.queryResult.parameters);
   let nome = req.body.queryResult.parameters.nome; 
