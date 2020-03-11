@@ -1,4 +1,20 @@
 
+  console.log(" Pegueio PSID");
+  console.log(req);
+  console.log("# req fim");
+  console.log(req.body);
+  console.log("# body fim");
+  console.log(req.body.queryResult);
+  console.log("# body.queryresult dim");
+  console.log(req.body.originalDetectIntentRequest);
+  console.log("# req.body.originalDetectIntentRequest fim");
+  console.log(req.body.originalDetectIntentRequest.payload);
+  console.log("# req.body.originalDetectIntentRequest.payload");
+  console.log(req.body.originalDetectIntentRequest.payload.data);
+  console.log("# req.body.originalDetectIntentRequest.payload.data fim");
+  console.log(req.body.originalDetectIntentRequest.payload.data.sender.id);
+  console.log("# req.body.originalDetectIntentRequest.payload.data fim");
+
 app.post('/webhook/', async function (req, res) {
     messaging_events = req.body.entry[0].messaging
     var psid = await get_psid(req);

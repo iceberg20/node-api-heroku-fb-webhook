@@ -216,31 +216,17 @@ async function salva_nome(psid, nome){
 
 app.post('/cadastro', async (req, res)=>{
   console.log("foi pro ff");
-  console.log(" Pegueio PSID");
-  console.log(req);
-  console.log("# req fim");
-  console.log(req.body);
-  console.log("# body fim");
-  console.log(req.body.queryResult);
-  console.log("# body.queryresult dim");
-  console.log(req.body.originalDetectIntentRequest);
-  console.log("# req.body.originalDetectIntentRequest fim");
-  console.log(req.body.originalDetectIntentRequest.payload);
-  console.log("# req.body.originalDetectIntentRequest.payload");
-  console.log(req.body.originalDetectIntentRequest.payload.data);
-  console.log("# req.body.originalDetectIntentRequest.payload.data fim");
-  console.log(req.body.originalDetectIntentRequest.payload.data.sender.id);
-  console.log("# req.body.originalDetectIntentRequest.payload.data fim");
 
+  let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
+  console.log("#psid:"+psid);
   console.log(req.body.queryResult.parameters);
   let nome = req.body.queryResult.parameters.nome; 
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
-  var psid = await get_psid(req);
-  console.log("# PSID"+psid);
+
   let context_nome = getContext(psid);
-    if(context_nome == "cadastro"){
+    if(context_nome != "sem_contexto"){
       text_response = "Você já possui um cadastro!";
     } else {
       //let cadastrado = await cadastrar_usuario_completo(psid);
@@ -249,7 +235,7 @@ app.post('/cadastro', async (req, res)=>{
  
   return res.json({
     fulfillmentText: text_response,
-    source: 'api'
+    source: 'webhook'
   })
 });
 
