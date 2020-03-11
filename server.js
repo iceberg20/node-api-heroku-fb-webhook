@@ -216,6 +216,9 @@ async function salva_nome(psid, nome){
 
 app.post('/cadastro', async (req, res)=>{
   console.log("foi pro ff");
+  console.log(req);
+  console.log(req.body);
+  console.log(req.body.queryResult);
   console.log(req.body.queryResult.parameters);
   let nome = req.body.queryResult.parameters.nome; 
   let num_oab = req.body.queryResult.parameters.num_oab;
