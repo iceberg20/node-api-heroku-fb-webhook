@@ -223,7 +223,7 @@ app.post('/cadastro', async (req, res)=>{
   console.log("# body fim");
   console.log(req.body.queryResult);
   console.log("# body.queryresult dim");
-  console.log(req.body.originalRequest.data)
+  console.log(req.body.originalDetectIntentRequest);
   console.log("# req.body.originalRequest.data fim");
   console.log(req.body.queryResult.parameters);
   let nome = req.body.queryResult.parameters.nome; 
