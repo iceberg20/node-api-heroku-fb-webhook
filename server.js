@@ -227,6 +227,7 @@ app.post('/cadastro', async (req, res)=>{
 
   let context_nome = getContext(psid);
     if(context_nome != "sem_contexto"){
+      console.log("# contexto"+context_nome);
       text_response = "Você já possui um cadastro!";
     } else {
       //let cadastrado = await cadastrar_usuario_completo(psid);
