@@ -45,16 +45,29 @@ async function getContext(psid) {
   try {
     let cliente = await pool.connect();
     let resultado = await cliente.query("select contexto from usuario where psid='"+psid+"'");
-    console.log(resultado.rows[0].contexto);
+    let contexto = "";
+    if(resultado.rowCount>0){
+      if(contexto = resultado.rows[0].contexto){
+        contexto = resultado.rows[0].contexto;
+      }
+    } else {
+      contexto = "sem_contexto";
+    }
     console.log(psid);
-    return resultado.rows[0].contexto;
+    return contexto;
   } catch (e) {
     console.log(e);
     return [];
   }
 }
 
+//token da página do TRE-RN
 var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
+
+//token da página do teste 2
+var token = "EAAoQNGvOt1kBAO4UQuK4KKtpZC9Ijqg8cJXvWV44nXPBwp7PoSIJDdM3Q1WVJfKYYgU4g6ZAqq0hZCRsmmv7JC8a2HEDgwEP80CdhB5UyZAzZAt67ZBrdXNZBygK3J9RTpJX90JmvNuZBZBIzAgwRX6jZBNxOWoZCJpZBP67ZArup9Qk8902rZBc6ACdhA";
+
+
 
 // function to echo back messages - added by Stefan
 
@@ -139,7 +152,30 @@ async function muda_context_usuario(psid, contexto){
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      let r = client.query("UPDATE public.usuario SET contexto = "+contexto+" WHERE psid='"+psid+"'", (err, result) => {
+      let r = client.query("UPDATE public.usuario SET contexto = '"+contexto+"' WHERE psid='"+psid+"'", (err, result) => {
+      console.log("#update context"+r);
+        return "usuario_cadatrado_com_sucesso";
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+          console.log(" # Deu erro porque veio vazio #");
+        }
+        console.log(" # O resultado pode estar vazio #");
+        console.log(result.rows)
+      })
+    })
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function update_name(psid, nome){
+  try {
+    pool.connect((err, client, release) => {
+      if (err) {
+        return console.error('Error acquiring client', err.stack)
+      }
+      let r = client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid='"+psid+"'", (err, result) => {
       console.log("#update context"+r);
         return "usuario_cadatrado_com_sucesso";
         release()
@@ -215,7 +251,6 @@ app.post('/webhook/', async function (req, res) {
         await sleep(300);
         console.log("param " + psid);
         let context = await getContext(psid);
-        console.log("# contexo ="+context);
         if(context=="cadastro"){
           sendTextMessage(sender, "Você já tem um cadastro \n "); 
           sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
@@ -224,15 +259,18 @@ app.post('/webhook/', async function (req, res) {
           let cadastrado =  await cadastrar_usuario(psid);
             sendTextMessage(sender, "Informe seu nome:");
             let m_contexto = await muda_context_usuario(psid, 'cadastro.nome');
+            let u_nome = await update_name(text);
             console.log("# contexto(nome):"+m_contexto);         
         }
       } else {
         let context_nome = await getContext(psid);
-        if(context_nome == "cadastro.nome"){
-          let cad_nome = await salva_nome(psid, text);
-          if(cad_nome == "nome_salvo_com_sucesso"){
-            sendTextMessage(sender, "Ok, "+text+" já anotei seu nome");    
-            sendTextMessage(sender, "Qual seu número de da OAB? ");          
+        if(context_nome == "sem_contexto"){
+          sendTextMessage(sender, "Primeiro faça o seu cadastro");
+        } else{
+          if(context_nome != "cadastro.finalizado"){
+            sendTextMessage(sender, "Finalize seu cadastro");
+          } else{
+            sendTextMessage(sender, "Legal, você já possui um cadastro e seu acompanhamento de processo está ativo!");
           }
         }
         //sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
