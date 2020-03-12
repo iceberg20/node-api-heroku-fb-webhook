@@ -216,7 +216,7 @@ async function salva_nome(psid, nome){
 }
 
 app.post('/cadastro', async (req, res)=>{
-  console.log("foi pro ff");
+  console.log("v1");
 
   let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
   console.log("#psid:"+psid);
