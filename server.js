@@ -145,12 +145,9 @@ async function cadastrar_usuario_completo(psid, nome, num_oab, rf_oab){
   try {
     let cliente = await pool.connect();
     let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
-    console.log("# insert"+resultado.rows);
-    let tipo = typeof resultado;
-    console.log("#tipo"+tipo);
-    res.json({ saida: "usuario_cadatrado_com_sucesso"});
+    console.log("usuario_cadatrado_com_sucesso");
   } catch (e) {
-    res.json({ saida: "erro_no_insert"});
+    console.log("erro_no_insert");
     console.log(e);
     return "erro_no_insert";
   } 
@@ -245,7 +242,7 @@ app.post('/cadastro', async (req, res)=>{
       if(cadastrado == "usuario_cadatrado_com_sucesso"){
         text_response = "Cadastrado com sucesso!";
       } else {
-        text_response = "Houve um erro no seu cadastro tente denovo";
+        text_response = "Você já possui um cadastro";
       }            
     }
  
