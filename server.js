@@ -141,10 +141,10 @@ app.get('/insert', async (req, res) =>{
 });
 
 
-async function cadastrar_usuario_completo(psid, nome, num_oab, rf_oab){
+async function cadastrar_usuario_completo(psid, num_oab, rf_oab, nome){
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('"+psid+"','cad.fin','"+num_oab+"',"+rf_oab+",'"+nome+"')");
     console.log("usuario_cadatrado_com_sucesso");
   } catch (e) {
     console.log("erro_no_insert");
