@@ -239,7 +239,7 @@ app.post('/cadastro', async (req, res)=>{
       text_response = "Você já possui um cadastro!";
       
     } else {
-      let cadastrado = cadastrar_usuario_completo(psid, num_oab, rf_oab ,nome);
+      let cadastrado = await cadastrar_usuario_completo(psid, num_oab, rf_oab ,nome);
       console.log("#res insert:"+cadastrado);
       if(cadastrado == "usuario_cadatrado_com_sucesso"){
         text_response = "Cadastrado com sucesso!";
