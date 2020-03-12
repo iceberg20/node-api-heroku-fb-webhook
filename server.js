@@ -229,7 +229,7 @@ app.post('/cadastro', async (req, res)=>{
   let psid = "3820305377987483";
   console.log("#psid:"+psid);
   console.log(req.body.queryResult.parameters);
-  let nome = req.body.queryResult.parameters.nome; 
+  let nome = req.body.queryResult.parameters.nome.name; 
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
