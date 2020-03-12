@@ -124,18 +124,19 @@ async function cadastrar_usuario(psid){
   }
 }
 
-async function cadastrar_usuario_completo(psid, num_oab, rf_oab){
+async function cadastrar_usuario_completo(psid, nome, num_oab, rf_oab){
   try {
     pool.connect((err, client, release) => {
       if (err) {
         return console.error('Error acquiring client', err.stack)
       }
-      client.query("insert into public.usuario (psid, contexto) values ('"+psid+"','cadastro')", (err, result) => {
-      return "usuario_cadatrado_com_sucesso";
+      let c_response = client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('"+psid+"','"+num_oab+"','"+psid+"','"+rf_oab+"','"+nome+"')", (err, result) => {
+      console.log("# insert:"+c_response);
+        return "usuario_cadatrado_com_sucesso";
         release()
         if (err) {
           return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
+          console.log(" # Deu erro no insert do banco #");
         }
         console.log(" # O resultado pode estar vazio #");
         console.log(result.rows)
@@ -228,9 +229,14 @@ app.post('/cadastro', async (req, res)=>{
   let context_nome = await getContext(psid);
     if(context_nome != "sem_contexto"){
       text_response = "Você já possui um cadastro!";
+      
     } else {
-      //let cadastrado = await cadastrar_usuario_completo(psid);
-      text_response = "Cadastrado com sucesso!";      
+      let cadastrado = cadastrar_usuario_completo(psid, num_oab, rf_oab ,nome);
+      if(cadastrado == "usuario_cadatrado_com_sucesso"){
+        text_response = "Cadastrado com sucesso!";
+      } else {
+        text_response = "Houve um erro no seu cadastro tente denovo";
+      }            
     }
  
   return res.json({
