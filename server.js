@@ -125,51 +125,35 @@ async function cadastrar_usuario(psid){
 }
 
 
-app.get('/insert', (req, res) =>{
+app.get('/insert', async (req, res) =>{
   try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('5','5','"+psid+"','"+rf_oab+"','"+nome+"')", (err, result) => {
-      console.log("# insert:"+result);
-        return "usuario_cadatrado_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro no insert do banco #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
+    console.log("# insert"+resultado.rows);
+    let tipo = typeof resultado;
+    console.log("#tipo"+tipo);
+    res.json({ saida: "cadastrado_com_sucesso"});
   } catch (e) {
+    res.json({ saida: "erro_no_insert"});
     console.log(e);
-  }
+    return "erro_no_insert";
+  }  
 });
 
 
 async function cadastrar_usuario_completo(psid, nome, num_oab, rf_oab){
   try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      client.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('"+psid+"','cad.fin','"+num_oab+"','"+rf_oab+"','"+nome+"')", (err, result) => {
-      console.log("# insert:"+result);
-        return "usuario_cadatrado_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro no insert do banco #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
+    console.log("# insert"+resultado.rows);
+    let tipo = typeof resultado;
+    console.log("#tipo"+tipo);
+    res.json({ saida: "usuario_cadatrado_com_sucesso"});
   } catch (e) {
+    res.json({ saida: "erro_no_insert"});
     console.log(e);
-  }
+    return "erro_no_insert";
+  } 
 }
 
 async function muda_context_usuario(psid, contexto){
