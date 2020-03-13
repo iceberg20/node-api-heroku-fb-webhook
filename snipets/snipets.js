@@ -1,4 +1,145 @@
+async function cadastrar_usuario(psid){
+    try {
+      pool.connect((err, client, release) => {
+        if (err) {
+          return console.error('Error acquiring client', err.stack)
+        }
+        client.query("insert into public.usuario (psid, contexto) values ('"+psid+"','cadastro')", (err, result) => {
+        return "usuario_cadatrado_com_sucesso";
+          release()
+          if (err) {
+            return console.error('Error executing query', err.stack)
+            console.log(" # Deu erro porque veio vazio #");
+          }
+          console.log(" # O resultado pode estar vazio #");
+          console.log(result.rows)
+        })
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
+async function update_name(psid, nome){
+    try {
+      pool.connect((err, client, release) => {
+        if (err) {
+          return console.error('Error acquiring client', err.stack)
+        }
+        let r = client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid='"+psid+"'", (err, result) => {
+        console.log("#update context"+r);
+          return "usuario_cadatrado_com_sucesso";
+          release()
+          if (err) {
+            return console.error('Error executing query', err.stack)
+            console.log(" # Deu erro porque veio vazio #");
+          }
+          console.log(" # O resultado pode estar vazio #");
+          console.log(result.rows)
+        })
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+async function muda_context_usuario(psid, contexto){
+    try {
+      pool.connect((err, client, release) => {
+        if (err) {
+          return console.error('Error acquiring client', err.stack)
+        }
+        let r = client.query("UPDATE public.usuario SET contexto = '"+contexto+"' WHERE psid='"+psid+"'", (err, result) => {
+        console.log("#update context"+r);
+          return "usuario_cadatrado_com_sucesso";
+          release()
+          if (err) {
+            return console.error('Error executing query', err.stack)
+            console.log(" # Deu erro porque veio vazio #");
+          }
+          console.log(" # O resultado pode estar vazio #");
+          console.log(result.rows)
+        })
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+//sql update
+async function salva_nome(psid, nome){
+    try {
+      pool.connect((err, client, release) => {
+        if (err) {
+          return console.error('Error acquiring client', err.stack)
+        }
+        client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid= '"+psid+"'", (err, result) => {
+        return "nome_salvo_com_sucesso";
+          release()
+          if (err) {
+            return console.error('Error executing query', err.stack)
+            console.log(" # Deu erro porque veio vazio #");
+          }
+          console.log(" # O resultado pode estar vazio #");
+          console.log(result.rows)
+        })
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+
+//tentativa de chatbot - cadastro usuário na mão
+app.post('/webhook/', async function (req, res) {
+    messaging_events = req.body.entry[0].messaging
+    var psid = await get_psid(req);
+    for (i = 0; i < messaging_events.length; i++) {
+      event = req.body.entry[0].messaging[i]
+      sender = event.sender.id
+      if (event.message && event.message.text) {
+        text = event.message.text
+  
+        if (text == "Iniciar acompanhamento" || text == "cd") {
+          sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro"); 
+          await sleep(300);
+          console.log("param " + psid);
+          let context = await getContext(psid);
+          if(context=="cadastro"){
+            sendTextMessage(sender, "Você já tem um cadastro \n "); 
+            sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
+          } else  {          
+            sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
+            let cadastrado =  await cadastrar_usuario(psid);
+              sendTextMessage(sender, "Informe seu nome:");
+              let m_contexto = await muda_context_usuario(psid, 'cadastro.nome');
+              let u_nome = await update_name(text);
+              console.log("# contexto(nome):"+m_contexto);         
+          }
+        } else {
+          let context_nome = await getContext(psid);
+          if(context_nome == "sem_contexto"){
+            sendTextMessage(sender, "Primeiro faça o seu cadastro");
+          } else{
+            if(context_nome != "cadastro.finalizado"){
+              sendTextMessage(sender, "Finalize seu cadastro");
+            } else{
+              sendTextMessage(sender, "Legal, você já possui um cadastro e seu acompanhamento de processo está ativo!");
+            }
+          }
+          //sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
+        }
+      }
+      if (event.postback) {
+        text = JSON.stringify(event.postback)
+        sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token)
+        continue
+      }
+    }
+    res.sendStatus(200)
+  });
+  
+  
   console.log(" Pegueio PSID");
   console.log(req);
   console.log("# req fim");

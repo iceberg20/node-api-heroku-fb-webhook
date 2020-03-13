@@ -26,6 +26,16 @@ app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
+//token da página do TRE-RN
+var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
+
+//token da página do teste 2
+var token = "EAAoQNGvOt1kBAO4UQuK4KKtpZC9Ijqg8cJXvWV44nXPBwp7PoSIJDdM3Q1WVJfKYYgU4g6ZAqq0hZCRsmmv7JC8a2HEDgwEP80CdhB5UyZAzZAt67ZBrdXNZBygK3J9RTpJX90JmvNuZBZBIzAgwRX6jZBNxOWoZCJpZBP67ZArup9Qk8902rZBc6ACdhA";
+
+app.get('/', function (req, res) {
+  res.render('pages/index');
+});
+
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
   let verify_token = req.query['hub.verify_token'];
@@ -61,16 +71,6 @@ async function getContext(psid) {
   }
 }
 
-//token da página do TRE-RN
-var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
-
-//token da página do teste 2
-var token = "EAAoQNGvOt1kBAO4UQuK4KKtpZC9Ijqg8cJXvWV44nXPBwp7PoSIJDdM3Q1WVJfKYYgU4g6ZAqq0hZCRsmmv7JC8a2HEDgwEP80CdhB5UyZAzZAt67ZBrdXNZBygK3J9RTpJX90JmvNuZBZBIzAgwRX6jZBNxOWoZCJpZBP67ZArup9Qk8902rZBc6ACdhA";
-
-
-
-// function to echo back messages - added by Stefan
-
 function sendTextMessage(sender, text) {
   messageData = {
     text: text
@@ -92,54 +92,11 @@ function sendTextMessage(sender, text) {
   })
 }
 
-app.get('/', function (req, res) {
-  res.render('pages/index');
-});
-
 async function get_psid(req){
   event = req.body.entry[0].messaging[0]
   sender = event.sender.id
   return sender;
 }
-
-async function cadastrar_usuario(psid){
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      client.query("insert into public.usuario (psid, contexto) values ('"+psid+"','cadastro')", (err, result) => {
-      return "usuario_cadatrado_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-
-app.get('/insert', async (req, res) =>{
-  try {
-    let cliente = await pool.connect();
-    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
-    console.log("# insert"+resultado.rows);
-    let tipo = typeof resultado;
-    console.log("#tipo"+tipo);
-    res.json({ saida: "cadastrado_com_sucesso"});
-  } catch (e) {
-    res.json({ saida: "erro_no_insert"});
-    console.log(e);
-    return "erro_no_insert";
-  }  
-});
-
 
 async function cadastrar_usuario_completo(psid, num_oab, rf_oab, nome){
   try {
@@ -152,74 +109,6 @@ async function cadastrar_usuario_completo(psid, num_oab, rf_oab, nome){
     console.log(e);
     return "erro_no_insert";
   } 
-}
-
-async function muda_context_usuario(psid, contexto){
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      let r = client.query("UPDATE public.usuario SET contexto = '"+contexto+"' WHERE psid='"+psid+"'", (err, result) => {
-      console.log("#update context"+r);
-        return "usuario_cadatrado_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-async function update_name(psid, nome){
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      let r = client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid='"+psid+"'", (err, result) => {
-      console.log("#update context"+r);
-        return "usuario_cadatrado_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-async function salva_nome(psid, nome){
-  try {
-    pool.connect((err, client, release) => {
-      if (err) {
-        return console.error('Error acquiring client', err.stack)
-      }
-      client.query("UPDATE public.usuario SET nome = '"+nome+"' WHERE psid= '"+psid+"'", (err, result) => {
-      return "nome_salvo_com_sucesso";
-        release()
-        if (err) {
-          return console.error('Error executing query', err.stack)
-          console.log(" # Deu erro porque veio vazio #");
-        }
-        console.log(" # O resultado pode estar vazio #");
-        console.log(result.rows)
-      })
-    })
-  } catch (e) {
-    console.log(e);
-  }
 }
 
 app.post('/cadastro', async (req, res)=>{
@@ -255,59 +144,46 @@ app.post('/cadastro', async (req, res)=>{
   })
 });
 
-app.post('/webhook/', async function (req, res) {
-  messaging_events = req.body.entry[0].messaging
-  var psid = await get_psid(req);
-  for (i = 0; i < messaging_events.length; i++) {
-    event = req.body.entry[0].messaging[i]
-    sender = event.sender.id
-    if (event.message && event.message.text) {
-      text = event.message.text
-
-      if (text == "Iniciar acompanhamento" || text == "cd") {
-        sendTextMessage(sender, "Primeiro deixa eu ver ser vc já tem um cadastro"); 
-        await sleep(300);
-        console.log("param " + psid);
-        let context = await getContext(psid);
-        if(context=="cadastro"){
-          sendTextMessage(sender, "Você já tem um cadastro \n "); 
-          sendTextMessage(sender, "Seu acompanhamento de processos está ativo");  
-        } else  {          
-          sendTextMessage(sender, "Você ainda não tem um cadastro, vamos fazer agora");
-          let cadastrado =  await cadastrar_usuario(psid);
-            sendTextMessage(sender, "Informe seu nome:");
-            let m_contexto = await muda_context_usuario(psid, 'cadastro.nome');
-            let u_nome = await update_name(text);
-            console.log("# contexto(nome):"+m_contexto);         
-        }
-      } else {
-        let context_nome = await getContext(psid);
-        if(context_nome == "sem_contexto"){
-          sendTextMessage(sender, "Primeiro faça o seu cadastro");
-        } else{
-          if(context_nome != "cadastro.finalizado"){
-            sendTextMessage(sender, "Finalize seu cadastro");
-          } else{
-            sendTextMessage(sender, "Legal, você já possui um cadastro e seu acompanhamento de processo está ativo!");
-          }
-        }
-        //sendTextMessage(sender, "Estamos em fase de testes: " + text.substring(0, 200))
-      }
-    }
-    if (event.postback) {
-      text = JSON.stringify(event.postback)
-      sendTextMessage(sender, "Postback received: " + text.substring(0, 200), token)
-      continue
-    }
-  }
-  res.sendStatus(200)
-});
-
 function sleep(ms) {
   return new Promise((resolve) => {
       setTimeout(resolve, ms);
   });
-}  
+}
+
+//Datase testes
+app.get('/insert', async (req, res) =>{
+  try {
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
+    console.log("# insert"+resultado.rows);
+    let tipo = typeof resultado;
+    console.log("#tipo"+tipo);
+    res.json({ saida: "cadastrado_com_sucesso"});
+  } catch (e) {
+    res.json(e);
+    console.log(e);
+    return "erro_no_insert";
+  }  
+});
+
+app.get('/update', async (req, res) =>{
+  let psid = req.query.psid || "3820305377987483";
+  let num_oab = req.query.num_oab;
+
+  try {
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("UPDATE public.usuario SET num_oab = '"+num_oab+"' WHERE psid='"+psid+"';");
+    console.log("# update result"+resultado);
+    if (resultado.rowCount>0){
+      res.json({ result: "Ok", command: resultado.command, rowcount: resultado.rowCount});
+    } else {
+      res.json({ result: "erro", command: resultado.command, rowcount: resultado.rowCount});
+    }
+  } catch (e) {
+    res.json(e);
+    console.log(e);
+  }  
+});
 
 //Porta padrão da aplicação
 app.listen(PORT, function () {
