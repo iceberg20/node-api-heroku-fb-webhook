@@ -113,6 +113,14 @@ async function cadastrar_usuario_completo(psid, num_oab, rf_oab, nome){
 
 app.post('/cadastro', async (req, res)=>{
   console.log("v1");
+  let intent_name = req.body.queryResult.intent.displayName;
+  if (intent_name == "mudar.num_oab - custom"){
+    console.log("o cara quer atualizar o numero da aoab")
+  }
+
+  if (intent_name == "usuario.cadastro - custom"){
+    console.log("o cara quer ativar o acompanhamento")
+  }
 
   //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
   let psid = "3820305377987483";
