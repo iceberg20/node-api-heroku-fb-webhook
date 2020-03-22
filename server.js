@@ -48,20 +48,16 @@ app.get('/webhook/', function (req, res) {
 app.get('/advogados_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("select  from usuario where psid='"+psid+"'");
-    let contexto = "";
+    let resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
     if(resultado.rowCount>0){
-      if(contexto = resultado.rows[0].contexto){
-        contexto = resultado.rows[0].contexto;
-      }
+      res.json({status: "ok", usuarios: resultado.rows});
     } else {
-      contexto = "sem_contexto";
+      res.json({status: "ok", usuarios: "nem uma usuario ativo"});
     }
-    console.log(psid);
-    return contexto;
+    res.json(resultado);
   } catch (e) {
     console.log(e);
-    return [];
+    res.json({"out": "Nem um usuario ativo"}) ;
   }
 });
 
