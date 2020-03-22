@@ -45,6 +45,26 @@ app.get('/webhook/', function (req, res) {
   res.send('Error, wrong token')
 });
 
+app.get('/advogados_ativos/', async function (req, res) {
+  try {
+    let cliente = await pool.connect();
+    let resultado = await cliente.query("select  from usuario where psid='"+psid+"'");
+    let contexto = "";
+    if(resultado.rowCount>0){
+      if(contexto = resultado.rows[0].contexto){
+        contexto = resultado.rows[0].contexto;
+      }
+    } else {
+      contexto = "sem_contexto";
+    }
+    console.log(psid);
+    return contexto;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+});
+
 function getPSID(req) {
   let msg = req.body.entry[0].messaging[0];
   let psid = msg.sender.id;
@@ -98,10 +118,10 @@ async function get_psid(req){
   return sender;
 }
 
-async function cadastrar_usuario_completo(psid, num_oab, rf_oab, nome){
+async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome){
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('"+psid+"','cad.fin','"+num_oab+"',"+rf_oab+",'"+nome+"')");
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, id_uf_oab, nome ) values ('"+psid+"','cad.fin','"+num_oab+"',"+id_uf_oab+",'"+nome+"')");
     console.log("#insert "+resultado);
     return "usuario_cadatrado_com_sucesso";
   } catch (e) {
@@ -162,7 +182,7 @@ function sleep(ms) {
 app.get('/insert', async (req, res) =>{
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, cord_rf_ob, nome ) values ('10','cad.fin','6',21,'nome')");
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, id_uf_oab, nome ) values ('10','cad.fin','6',21,'nome')");
     console.log("# insert"+resultado.rows);
     let tipo = typeof resultado;
     console.log("#tipo"+tipo);

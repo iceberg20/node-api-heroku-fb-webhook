@@ -1,5 +1,10 @@
 SELECT * FROM public.usuario;
 
+ALTER TABLE public.usuario ALTER COLUMN id_uf_oab TYPE integer;
+
+--Consulta de advogados ativos para o PD
+SELECT num_oab, cord_rf_ob FROM public.usuario;
+
 ALTER TABLE usuario ALTER COLUMN id TYPE serial;
 
 --salva psid - cadastra usuário
@@ -32,3 +37,5 @@ CREATE TABLE usuario (
 );
 
 TRUNCATE public.usuario;
+
+
