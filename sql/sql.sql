@@ -1,9 +1,11 @@
 SELECT * FROM public.usuario;
 
-ALTER TABLE public.usuario ALTER COLUMN id_uf_oab TYPE integer;
+ALTER TABLE usuario DROP COLUMN cord_rf_ob;
+
+ALTER TABLE usuario add COLUMN id_uf_oab integer;
 
 --Consulta de advogados ativos para o PD
-SELECT num_oab, cord_rf_ob FROM public.usuario;
+SELECT nome, num_oab, id_uf_oab FROM public.usuario;
 
 ALTER TABLE usuario ALTER COLUMN id TYPE serial;
 
