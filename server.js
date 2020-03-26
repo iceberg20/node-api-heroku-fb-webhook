@@ -48,17 +48,19 @@ app.get('/webhook/', function (req, res) {
 app.get('/advogados_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
-    if(resultado.rowCount>0){
-      res.json({status: "ok", usuarios: resultado.rows});
-    } else {
-      res.json({status: "ok", usuarios: "nem uma usuario ativo"});
-    }
-    res.json(resultado);
+    var resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
   } catch (e) {
-    console.log(e);
-    res.json({"out": "Nem um usuario ativo"}) ;
+    console.log(e);    
   }
+  
+  let out;
+  if(resultado.rowCount>0){
+    out = {status: "ok", usuarios: resultado.rows};
+  } else {
+    out = {status: "ok", usuarios: "nem uma usuario ativo"};
+  }
+
+  res.json(out);
 });
 
 function getPSID(req) {
