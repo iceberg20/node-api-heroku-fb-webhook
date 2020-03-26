@@ -9,7 +9,7 @@ var fs = require('fs');
 var http = require('http');
 var str_con = process.env.STR_CON;
 
-// Version 1
+// Version 3
 // DB poll config
 const { Pool } = require('pg');
 const pool = new Pool({
