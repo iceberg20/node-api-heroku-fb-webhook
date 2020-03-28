@@ -46,6 +46,10 @@ app.get('/webhook/', function (req, res) {
   res.send('Error, wrong token')
 });
 
+app.post('/despachar', function (req, res) {
+  console.log(req.body);
+});
+
 app.get('/advogados_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
