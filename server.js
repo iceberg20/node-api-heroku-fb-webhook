@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
   let verify_token = req.query['hub.verify_token'];
-  if ( verify_token === 'trelabs_sj') {
+  if (verify_token === 'trelabs_sj') {
     res.send(req.query['hub.challenge'])
   }
   res.send('Error, wrong token')
@@ -53,25 +53,44 @@ app.post('/despachar', function (req, res) {
   res.send("fim");
 });
 
-async function despachar_fb(processos){
+async function despachar_fb(processos) {
+  //let psid = 3820305377987483;
   for (const [idx, processo] of processos.entries()) {
     let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
-    console.log(processo);
-  }  
+    let qtd = processo.usuario.processos.length;
+    let reposta_1 = `Olá, você tem ${qtd} processos atualizados. `;
+    sendTextMessage(psid, reposta_1);
 
-  //let psid = 3820305377987483;
-  let texto = "Eu vim do PD!";
-  //sendTextMessage(psid,texto);
+    console.log(processo);
+    let mensagem = await montar_resposta_fb(processo);
+    sendTextMessage(psid, mensagem);
+  }
 }
 
-async function buscar_psid_por_oab(num_oab, id_uf_oab ){
+async function montar_resposta_fb(usuario) {
+  let resposta = await montar_text_processos(usuario);
+  return resposta;
+}
+
+async function montar_text_processos(usuario) {
+  let resposta = "";
+  let qtd = usuario.usuario.processos.length;
+  let lista = usuario.usuario.processos;
+
+  for (const [idx, processo] of lista.entries()) {
+    resposta += `Processo:${processo.id_processo_trf} foi movimentado e se encontra na situação: ${processo.ds_ultimo_movimento} - `;
+  }
+  return resposta;
+}
+
+async function buscar_psid_por_oab(num_oab, id_uf_oab) {
   try {
     let cliente = await pool.connect();
-    var resultado = await cliente.query("select psid from usuario where num_oab='"+num_oab+"' and id_uf_oab="+id_uf_oab+";");
+    var resultado = await cliente.query("select psid from usuario where num_oab='" + num_oab + "' and id_uf_oab=" + id_uf_oab + ";");
   } catch (e) {
-    console.log(e);    
+    console.log(e);
   }
-  return resultado;
+  return resultado.rows[0].psid;
 }
 
 app.get('/advogados_ativos/', async function (req, res) {
@@ -79,14 +98,14 @@ app.get('/advogados_ativos/', async function (req, res) {
     let cliente = await pool.connect();
     var resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
   } catch (e) {
-    console.log(e);    
+    console.log(e);
   }
-  
+
   let out;
-  if(resultado.rowCount>0){
-    out = {status: "ok", usuarios: resultado.rows};
+  if (resultado.rowCount > 0) {
+    out = { status: "ok", usuarios: resultado.rows };
   } else {
-    out = {status: "ok", usuarios: "nem uma usuario ativo"};
+    out = { status: "ok", usuarios: "nem uma usuario ativo" };
   }
 
   res.json(out);
@@ -101,10 +120,10 @@ function getPSID(req) {
 async function getContext(psid) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("select contexto from usuario where psid='"+psid+"'");
+    let resultado = await cliente.query("select contexto from usuario where psid='" + psid + "'");
     let contexto = "";
-    if(resultado.rowCount>0){
-      if(contexto = resultado.rows[0].contexto){
+    if (resultado.rowCount > 0) {
+      if (contexto = resultado.rows[0].contexto) {
         contexto = resultado.rows[0].contexto;
       }
     } else {
@@ -139,60 +158,60 @@ function sendTextMessage(sender, text) {
   })
 }
 
-async function get_psid(req){
+async function get_psid(req) {
   event = req.body.entry[0].messaging[0]
   sender = event.sender.id
   return sender;
 }
 
-async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome){
+async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, id_uf_oab, nome ) values ('"+psid+"','cad.fin','"+num_oab+"',"+id_uf_oab+",'"+nome+"')");
-    console.log("#insert "+resultado);
+    let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, id_uf_oab, nome ) values ('" + psid + "','cad.fin','" + num_oab + "'," + id_uf_oab + ",'" + nome + "')");
+    console.log("#insert " + resultado);
     return "usuario_cadatrado_com_sucesso";
   } catch (e) {
     console.log("erro_no_insert");
     console.log(e);
     return "erro_no_insert";
-  } 
+  }
 }
 
-app.post('/cadastro', async (req, res)=>{
+app.post('/cadastro', async (req, res) => {
   console.log("v1");
   let intent_name = req.body.queryResult.intent.displayName;
-  if (intent_name == "mudar.num_oab - custom"){
+  if (intent_name == "mudar.num_oab - custom") {
     console.log("o cara quer atualizar o numero da aoab")
   }
 
-  if (intent_name == "usuario.cadastro - custom"){
+  if (intent_name == "usuario.cadastro - custom") {
     console.log("o cara quer ativar o acompanhamento")
   }
 
   //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
   let psid = "3820305377987483";
-  console.log("#psid:"+psid);
+  console.log("#psid:" + psid);
   console.log(req.body.queryResult.parameters);
-  let nome = req.body.queryResult.parameters.nome.name; 
+  let nome = req.body.queryResult.parameters.nome.name;
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
 
   let context_nome = await getContext(psid);
-    if(context_nome != "sem_contexto"){
-      console.log("# contexto"+context_nome);
-      text_response = "Você já possui um cadastro!";
-      
+  if (context_nome != "sem_contexto") {
+    console.log("# contexto" + context_nome);
+    text_response = "Você já possui um cadastro!";
+
+  } else {
+    let cadastrado = await cadastrar_usuario_completo(psid, num_oab, rf_oab, nome);
+    console.log("#res insert:" + cadastrado);
+    if (cadastrado == "usuario_cadatrado_com_sucesso") {
+      text_response = "Cadastrado com sucesso!";
     } else {
-      let cadastrado = await cadastrar_usuario_completo(psid, num_oab, rf_oab ,nome);
-      console.log("#res insert:"+cadastrado);
-      if(cadastrado == "usuario_cadatrado_com_sucesso"){
-        text_response = "Cadastrado com sucesso!";
-      } else {
-        text_response = "Você já possui um cadastro";
-      }            
+      text_response = "Você já possui um cadastro";
     }
- 
+  }
+
   return res.json({
     fulfillmentText: text_response,
     source: 'webhook'
@@ -201,43 +220,44 @@ app.post('/cadastro', async (req, res)=>{
 
 function sleep(ms) {
   return new Promise((resolve) => {
-      setTimeout(resolve, ms);
+    setTimeout(resolve, ms);
   });
 }
 
 //Datase testes
-app.get('/insert', async (req, res) =>{
+app.get('/insert', async (req, res) => {
   try {
     let cliente = await pool.connect();
     let resultado = await cliente.query("insert into public.usuario (psid, contexto, num_oab, id_uf_oab, nome ) values ('10','cad.fin','6',21,'nome')");
-    console.log("# insert"+resultado.rows);
+    console.log("# insert" + resultado.rows);
     let tipo = typeof resultado;
-    console.log("#tipo"+tipo);
-    res.json({ saida: "cadastrado_com_sucesso"});
+    console.log("#tipo" + tipo);
+    res.json({ saida: "cadastrado_com_sucesso" });
   } catch (e) {
     res.json(e);
     console.log(e);
     return "erro_no_insert";
-  }  
+  }
 });
 
-app.get('/update', async (req, res) =>{
+
+app.get('/update', async (req, res) => {
   let psid = req.query.psid || "3820305377987483";
   let num_oab = req.query.num_oab;
 
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query("UPDATE public.usuario SET num_oab = '"+num_oab+"' WHERE psid='"+psid+"';");
-    console.log("# update result"+resultado);
-    if (resultado.rowCount>0){
-      res.json({ result: "Ok", command: resultado.command, rowcount: resultado.rowCount});
+    let resultado = await cliente.query("UPDATE public.usuario SET num_oab = '" + num_oab + "' WHERE psid='" + psid + "';");
+    console.log("# update result" + resultado);
+    if (resultado.rowCount > 0) {
+      res.json({ result: "Ok", command: resultado.command, rowcount: resultado.rowCount });
     } else {
-      res.json({ result: "erro", command: resultado.command, rowcount: resultado.rowCount});
+      res.json({ result: "erro", command: resultado.command, rowcount: resultado.rowCount });
     }
   } catch (e) {
     res.json(e);
     console.log(e);
-  }  
+  }
 });
 
 //Porta padrão da aplicação
