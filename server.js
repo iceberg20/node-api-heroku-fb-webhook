@@ -47,8 +47,32 @@ app.get('/webhook/', function (req, res) {
 });
 
 app.post('/despachar', function (req, res) {
+  let processos = req.body;
   console.log(req.body);
+  despachar_fb(processos);
+  res.send("fim");
 });
+
+async function despachar_fb(processos){
+  for (const [idx, processo] of processos.entries()) {
+    let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
+    console.log(processo);
+  }  
+
+  //let psid = 3820305377987483;
+  let texto = "Eu vim do PD!";
+  //sendTextMessage(psid,texto);
+}
+
+async function buscar_psid_por_oab(num_oab, id_uf_oab ){
+  try {
+    let cliente = await pool.connect();
+    var resultado = await cliente.query("select psid from usuario where num_oab='"+num_oab+"' and id_uf_oab="+id_uf_oab+";");
+  } catch (e) {
+    console.log(e);    
+  }
+  return resultado;
+}
 
 app.get('/advogados_ativos/', async function (req, res) {
   try {

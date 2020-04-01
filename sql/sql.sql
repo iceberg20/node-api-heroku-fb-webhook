@@ -12,6 +12,10 @@ ALTER TABLE usuario ALTER COLUMN id TYPE serial;
 --salva psid - cadastra usuário
 insert into public.usuario (psid, contexto) values ('2486860938102801','cadastro');
 
+--Inserir usuario
+insert into public.usuario (psid, num_oab, id_uf_oab, nome) values ('99999','63770',21, 'maria');
+6766
+
 --muda contexto/estado
 UPDATE public.usuario
 SET contexto = 'cadastro.nome'
