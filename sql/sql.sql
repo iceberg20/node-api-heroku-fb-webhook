@@ -14,6 +14,7 @@ insert into public.usuario (psid, contexto) values ('2486860938102801','cadastro
 
 --Inserir usuario
 insert into public.usuario (psid, num_oab, id_uf_oab, nome) values ('99999','6766',21, 'maria');
+insert into public.usuario (psid, num_oab, id_uf_oab, nome) values ('3820305377987483','3640',21, 'Pedro');
 
 -- Deletar Usuario
 DELETE FROM public.usuario WHERE num_oab = '6766';
