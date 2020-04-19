@@ -54,14 +54,17 @@ app.post('/despachar', function (req, res) {
 });
 
 app.post('/despachar_api', function (req, res) {
-  let operacao = req.body;
+  let usuarios = req.body.usuarios;
+  let produto = req.body.produto;
+  let operacao = req.body.operacao;
+  let qtd = req.body.qtd;
+
   console.log(req.body);
-  despachar_fb_api(processos);
+  despachar_fb_api(usuarios, produto, operacao, qtd);
   res.send("despachado");
 });
 
 async function despachar_fb(processos) {
-  //let psid = 3820305377987483;
   for (const [idx, processo] of processos.entries()) {
     let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
     let qtd = processo.usuario.processos.length;
@@ -74,17 +77,12 @@ async function despachar_fb(processos) {
   }
 }
 
-async function despachar_fb_api(operacao) {
-  //let psid = 3820305377987483;
-  for (const [idx, processo] of processos.entries()) {
-    let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
-    let qtd = processo.usuario.processos.length;
-    let reposta_1 = `Olá, você tem ${qtd} processos atualizados. `;
+async function despachar_fb_api(usuarios, produto, operacao, qtd) {
+    for (const [idx, usuario] of usuarios.entries()) {
+    let psid = await buscar_psid_usuarios_estoque();
+    let reposta_1 = `Olá, ${qtd} ${operacao} . `;
+    console.log(reposta_1);
     sendTextMessage(psid, reposta_1);
-
-    console.log(processo);
-    let mensagem = await montar_resposta_fb(processo);
-    sendTextMessage(psid, mensagem);
   }
 }
 
@@ -108,6 +106,16 @@ async function buscar_psid_por_oab(num_oab, id_uf_oab) {
   try {
     let cliente = await pool.connect();
     var resultado = await cliente.query("select psid from usuario where num_oab='" + num_oab + "' and id_uf_oab=" + id_uf_oab + ";");
+  } catch (e) {
+    console.log(e);
+  }
+  return resultado.rows[0].psid;
+}
+
+async function buscar_psid_usuarios_estoque() {
+  try {
+    let cliente = await pool.connect();
+    var resultado = await cliente.query("select psid from usuario_estoque;");
   } catch (e) {
     console.log(e);
   }
