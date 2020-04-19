@@ -50,10 +50,31 @@ app.post('/despachar', function (req, res) {
   let processos = req.body;
   console.log(req.body);
   despachar_fb(processos);
-  res.send("fim");
+  res.send("despachado");
+});
+
+app.post('/despachar_api', function (req, res) {
+  let operacao = req.body;
+  console.log(req.body);
+  despachar_fb_api(processos);
+  res.send("despachado");
 });
 
 async function despachar_fb(processos) {
+  //let psid = 3820305377987483;
+  for (const [idx, processo] of processos.entries()) {
+    let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
+    let qtd = processo.usuario.processos.length;
+    let reposta_1 = `Olá, você tem ${qtd} processos atualizados. `;
+    sendTextMessage(psid, reposta_1);
+
+    console.log(processo);
+    let mensagem = await montar_resposta_fb(processo);
+    sendTextMessage(psid, mensagem);
+  }
+}
+
+async function despachar_fb_api(operacao) {
   //let psid = 3820305377987483;
   for (const [idx, processo] of processos.entries()) {
     let psid = await buscar_psid_por_oab(processo.usuario.num_oab, processo.usuario.id_uf_oab);
@@ -110,6 +131,26 @@ app.get('/advogados_ativos/', async function (req, res) {
 
   res.json(out);
 });
+
+app.get('/usuarios_estoque_ativos/', async function (req, res) {
+  try {
+    let cliente = await pool.connect();
+    var resultado = await cliente.query("select psid, nome from usuario_estoque;");
+  } catch (e) {
+    console.log(e);
+  }
+
+  let out;
+  if (resultado.rowCount > 0) {
+    out = { status: "ok", usuarios: resultado.rows };
+  } else {
+    out = { status: "ok", usuarios: "nem uma usuario ativo" };
+  }
+
+  res.json(out);
+});
+
+
 
 function getPSID(req) {
   let msg = req.body.entry[0].messaging[0];
