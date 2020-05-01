@@ -122,7 +122,7 @@ async function buscar_psid_usuarios_estoque() {
   return resultado.rows[0].psid;
 }
 
-app.get('/usuarios_ativos/', async function (req, res) {
+app.get('/usuarios_db_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
     var resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
@@ -140,7 +140,7 @@ app.get('/usuarios_ativos/', async function (req, res) {
   res.json(out);
 });
 
-app.get('/usuarios_estoque_ativos/', async function (req, res) {
+app.get('/usuarios_api_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
     var resultado = await cliente.query("select psid, nome from usuario_estoque;");
