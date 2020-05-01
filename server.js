@@ -122,7 +122,7 @@ async function buscar_psid_usuarios_estoque() {
   return resultado.rows[0].psid;
 }
 
-app.get('/advogados_ativos/', async function (req, res) {
+app.get('/usuarios_ativos/', async function (req, res) {
   try {
     let cliente = await pool.connect();
     var resultado = await cliente.query("select nome, num_oab, id_uf_oab from usuario;");
