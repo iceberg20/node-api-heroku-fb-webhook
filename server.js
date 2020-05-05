@@ -8,6 +8,7 @@ var request = require('request');
 var fs = require('fs');
 var http = require('http');
 var str_con = process.env.STR_CON;
+var { token_tre, token_pagina_teste2 } = require('./token');
 
 // Version 11
 // DB poll config
@@ -27,11 +28,8 @@ app.set('view engine', 'ejs');
 
 app.use('/static', express.static('public'));
 
-//token da página do TRE-RN
-var token = "EAAYxzACKqZAsBAJcnacHvK0Yg7DZA20gsFyKjcaV7cpS1NZBX300oXsGNvYXPjJTYTjVIhSi6tNn9byyicNdgp8G4WxHapt6JE56o8udTtWZAKY6Amr1ayDVwTnDfvcRqSvXS25EEMC5KefMaijOZBouyEnuGcdvIZALRX8K18xtSJqx8dv9zM";
-
 //token da página do teste 2
-var token = "EAAoQNGvOt1kBAO4UQuK4KKtpZC9Ijqg8cJXvWV44nXPBwp7PoSIJDdM3Q1WVJfKYYgU4g6ZAqq0hZCRsmmv7JC8a2HEDgwEP80CdhB5UyZAzZAt67ZBrdXNZBygK3J9RTpJX90JmvNuZBZBIzAgwRX6jZBNxOWoZCJpZBP67ZArup9Qk8902rZBc6ACdhA";
+var token = token_pagina_teste2;
 
 app.get('/', function (req, res) {
   res.render('pages/index');
