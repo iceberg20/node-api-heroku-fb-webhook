@@ -10,7 +10,7 @@ var http = require('http');
 var str_con = process.env.STR_CON;
 var { token_tre, token_pagina_teste2 } = require('./token');
 
-// Version 11
+// Version 12
 // DB poll config
 const { Pool } = require('pg');
 const pool = new Pool({
