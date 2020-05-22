@@ -56,9 +56,10 @@ app.post('/despachar_api', function (req, res) {
   let produto = req.body.produto;
   let operacao = req.body.operacao;
   let qtd = req.body.qtd;
+  let api_key = req.body.api_key;
 
   console.log(req.body);
-  despachar_fb_api(usuarios, produto, operacao, qtd);
+  despachar_fb_api(usuarios, produto, operacao, qtd, api_key);
   res.send("despachado");
 });
 
@@ -75,9 +76,9 @@ async function despachar_fb(processos) {
   }
 }
 
-async function despachar_fb_api(usuarios, produto, operacao, qtd) {
+async function despachar_fb_api(usuarios, produto, operacao, qtd, api_key) {
     for (const [idx, usuario] of usuarios.entries()) {
-    let psid = await buscar_psid_usuarios_estoque();
+    let psid = await buscar_psid_usuarios_estoque(api_key);
     let reposta_1 = `Olá, ${qtd} ${operacao} . `;
     console.log(reposta_1);
     sendTextMessage(psid, reposta_1);
@@ -110,10 +111,10 @@ async function buscar_psid_por_oab(num_oab, id_uf_oab) {
   return resultado.rows[0].psid;
 }
 
-async function buscar_psid_usuarios_estoque() {
+async function buscar_psid_usuarios_estoque(api_key) {
   try {
     let cliente = await pool.connect();
-    var resultado = await cliente.query("select psid from usuario_estoque;");
+    var resultado = await cliente.query(`select psid from usuario_estoque where api_key='${api_key}';`);
   } catch (e) {
     console.log(e);
   }
