@@ -242,10 +242,6 @@ app.post('/cadastro', async (req, res) => {
     console.log("o usuário quer ativar o acompanhamento");
   }
 
-
-
-  usuario.cadastro.estoque - custom
-
   //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
   let psid = "3820305377987483";
   console.log("#psid:" + psid);
