@@ -251,11 +251,7 @@ app.post('/cadastro', async (req, res) => {
     console.log("o usuário quer atualizar o numero da aoab");
   }
 
-  if (intent_name == "usuario.cadastro.estoque - custom") {
-    console.log("o usuário quer ativar o acompanhamento");
-    await cadastrar_usuario_da_api("91919", "Marcos","opopoop");
-    console.log("# Usuário da APi cadastrado com suceosso! #");
-  }
+
 
   //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
   let psid = "3820305377987483";
@@ -265,6 +261,17 @@ app.post('/cadastro', async (req, res) => {
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
+  
+  let cod_conf = req.body.queryResult.parameters.cod_conf;
+
+  let psid_api = Date.now();
+
+  //Cadastro de Usuário da API
+  if (intent_name == "usuario.cadastro.estoque - custom") {
+    console.log("o usuário quer ativar o acompanhamento");
+    await cadastrar_usuario_da_api(psid_api, nome, cod_conf);
+    console.log("# Usuário da APi cadastrado com suceosso! #");
+  }
 
   let context_nome = await getContext(psid);
   if (context_nome != "sem_contexto") {
