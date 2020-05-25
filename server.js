@@ -226,9 +226,13 @@ async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
 }
 
 app.post('/cadastro', async (req, res) => {
-  console.log("v1");
+  console.log("v2");
   let intent_name = req.body.queryResult.intent.displayName;
   console.log(intent_name);
+
+  if (intent_name == "usuario.cadastro - custom") {
+    console.log("o usuário quer ativar o acompanhamento do estoque");
+  }
   
   if (intent_name == "mudar.num_oab - custom") {
     console.log("o usuário quer atualizar o numero da aoab");
@@ -238,9 +242,7 @@ app.post('/cadastro', async (req, res) => {
     console.log("o usuário quer ativar o acompanhamento");
   }
 
-  if (intent_name == "usuario.cadastro - custom") {
-    console.log("o usuário quer ativar o acompanhamento");
-  }
+
 
   usuario.cadastro.estoque - custom
 
