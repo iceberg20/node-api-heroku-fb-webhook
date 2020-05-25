@@ -238,40 +238,43 @@ async function cadastrar_usuario_da_api( psid, nome, cod_conf ) {
   }
 }
 
+async function cadastro_usuario_da_api(psid, params){
+  let nome = params.nome;
+  let cod_conf = params.cod_conf;
+
+  console.log("o usuário quer ativar o acompanhamento");
+  await cadastrar_usuario_da_api(psid, nome, cod_conf);
+  console.log("# Usuário da APi cadastrado com suceosso! #");
+
+}
+
 app.post('/cadastro', async (req, res) => {
-  console.log("v2");
+  console.log("v4");
+
   let intent_name = req.body.queryResult.intent.displayName;
+  let params = req.body.queryResult.parameters;
+  let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
+
+  //Cadastro de Usuário da API
+  if (intent_name == "usuario.cadastro.estoque - custom") {
+    await cadastro_usuario_da_api(psid, params);  
+  }   
+
   console.log(intent_name);
 
   if (intent_name == "usuario.cadastro - custom") {
     console.log("o usuário quer ativar o acompanhamento do estoque");
   }
+
   
-  if (intent_name == "mudar.num_oab - custom") {
-    console.log("o usuário quer atualizar o numero da aoab");
-  }
-
-
-
-  //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
-  let psid = "3820305377987483";
+  //let psid = "3820305377987483";
   console.log("#psid:" + psid);
+
   console.log(req.body.queryResult.parameters);
   let nome = req.body.queryResult.parameters.nome.name;
   let num_oab = req.body.queryResult.parameters.num_oab;
   let rf_oab = req.body.queryResult.parameters.rf_oab;
   let text_response = "";
-  
-  let cod_conf = req.body.queryResult.parameters.cod_conf;
-
-  let psid_api = Date.now();
-
-  //Cadastro de Usuário da API
-  if (intent_name == "usuario.cadastro.estoque - custom") {
-    console.log("o usuário quer ativar o acompanhamento");
-    await cadastrar_usuario_da_api(psid_api, nome, cod_conf);
-    console.log("# Usuário da APi cadastrado com suceosso! #");
-  }
 
   let context_nome = await getContext(psid);
   if (context_nome != "sem_contexto") {
