@@ -225,6 +225,19 @@ async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
   }
 }
 
+async function cadastrar_usuario_da_api( psid, nome, cod_conf ) {
+  try {
+    let cliente = await pool.connect();
+    let resultado = await cliente.query(`insert into public.usuario_estoque (psid, nome, api_key ) values ( ${psid}, ${nome}, ${cod_conf} )`);
+    console.log("#insert " + resultado);
+    return "usuario_cadatrado_com_sucesso";
+  } catch (e) {
+    console.log("erro_no_insert");
+    console.log(e);
+    return "erro_no_insert";
+  }
+}
+
 app.post('/cadastro', async (req, res) => {
   console.log("v2");
   let intent_name = req.body.queryResult.intent.displayName;
@@ -238,8 +251,10 @@ app.post('/cadastro', async (req, res) => {
     console.log("o usuário quer atualizar o numero da aoab");
   }
 
-  if (intent_name == "usuario.cadastro - custom") {
+  if (intent_name == "usuario.cadastro.estoque - custom") {
     console.log("o usuário quer ativar o acompanhamento");
+    await cadastrar_usuario_da_api("91919", "Marcos","opopoop");
+    console.log("# Usuário da APi cadastrado com suceosso! #");
   }
 
   //let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
