@@ -78,16 +78,14 @@ async function despachar_fb(processos) {
 }
 
 async function despachar_fb_api(usuarios, produto, operacao, qtd, api_key) {
+  let psid = ""; 
   for (const [idx, usuario] of usuarios.entries()) {
-    let psid = await buscar_psid_usuarios_estoque(api_key);
+    psid = await buscar_psid_usuarios_estoque(api_key, usuario.nome);
     let reposta_1 = `Olá, ${qtd} ${operacao} . `;
     console.log(reposta_1);
-    try{
+    if( psid != undefined ) {
       sendTextMessage(psid, reposta_1);
-    } catch(e){
-      console.log("erro_despachar_fb_api", e);
-      return
-    }    
+    }  
   }
 }
 
@@ -117,14 +115,19 @@ async function buscar_psid_por_oab(num_oab, id_uf_oab) {
   return resultado.rows[0].psid;
 }
 
-async function buscar_psid_usuarios_estoque(api_key) {
+async function buscar_psid_usuarios_estoque(api_key, nome) {
   try {
     let cliente = await pool.connect();
-    var resultado = await cliente.query(`select psid from usuario_estoque where api_key='${api_key}';`);
+    let query = `select psid from usuario_estoque where nome='${nome}' and api_key='${api_key}';`
+    var resultado = await cliente.query(query);
   } catch (e) {
     console.log(e);
   }
-  return resultado.rows[0].psid;
+  if(resultado.rows.length > 0) {
+    return resultado.rows[0].psid;
+  } else {
+    return undefined;
+  }  
 }
 
 app.get('/usuarios_db_ativos/', async function (req, res) {
