@@ -44,6 +44,7 @@ app.get('/webhook/', function (req, res) {
   res.send('Error, wrong token')
 });
 
+//version(1)
 app.post('/despachar', function (req, res) {
   let processos = req.body;
   console.log(req.body);
@@ -81,7 +82,12 @@ async function despachar_fb_api(usuarios, produto, operacao, qtd, api_key) {
     let psid = await buscar_psid_usuarios_estoque(api_key);
     let reposta_1 = `Olá, ${qtd} ${operacao} . `;
     console.log(reposta_1);
-    sendTextMessage(psid, reposta_1);
+    try{
+      sendTextMessage(psid, reposta_1);
+    } catch(e){
+      console.log("erro_despachar_fb_api", e);
+      return
+    }    
   }
 }
 
