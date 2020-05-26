@@ -244,8 +244,7 @@ app.post('/cadastro', async (req, res) => {
   } else {
     console.log("#Intent: Acompanhaemnto de processos #");
 
-    let psid= req.body.originalDetectIntentRequest.payload.data.sender;
-  //  let psid = "3820305377987483";
+    let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
     console.log("#psid:" + psid);
 
     console.log(req.body.queryResult.parameters);
