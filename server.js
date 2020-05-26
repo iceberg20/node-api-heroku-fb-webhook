@@ -253,7 +253,7 @@ app.post('/cadastro', async (req, res) => {
 
   let intent_name = req.body.queryResult.intent.displayName;
   let params = req.body.queryResult.parameters;
-  let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
+  let psid = getPSID(req);
 
   //Cadastro de Usuário da API
   if (intent_name == "usuario.cadastro.estoque - custom") {
