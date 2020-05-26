@@ -214,13 +214,15 @@ async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
 async function cadastrar_usuario_da_api(psid, nome, cod_conf) {
   try {
     let cliente = await pool.connect();
-    let resultado = await cliente.query(`insert into public.usuario_estoque ( psid, nome, api_key ) values ( ${psid}, ${nome}, ${cod_conf} );`);
+    let query = `insert into public.usuario_estoque ( psid, nome, api_key ) values ( ${psid}, ${nome}, ${cod_conf} );`;
+    console.log(query);
+    let resultado = await cliente.query(query);
     console.log("#insert " + resultado);
     return "usuario_cadatrado_com_sucesso";
   } catch (e) {
-    console.log("erro_no_insert");
+    console.log("rro_no_insert_usuario_api");
     console.log(e);
-    return "erro_no_insert";
+    return "erro_no_insert_usuario_api";
   }
 }
 
