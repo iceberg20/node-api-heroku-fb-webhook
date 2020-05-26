@@ -249,6 +249,12 @@ async function cadastro_usuario_da_api(psid, params){
 }
 
 app.post('/cadastro', async (req, res) => {
+  console.log("# PSID #");
+  console.log(req.query.psid);
+  return res.status(200).send({ status: "ok" });
+});
+
+app.post('/cadastro_old', async (req, res) => {
   console.log("v4");
 
   let intent_name = req.body.queryResult.intent.displayName;
