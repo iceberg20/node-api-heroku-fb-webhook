@@ -1,3 +1,11 @@
+intent_name == "usuario.cadastro - custom"
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function cadastrar_usuario(psid){
     try {
       pool.connect((err, client, release) => {

@@ -77,7 +77,7 @@ async function despachar_fb(processos) {
 }
 
 async function despachar_fb_api(usuarios, produto, operacao, qtd, api_key) {
-    for (const [idx, usuario] of usuarios.entries()) {
+  for (const [idx, usuario] of usuarios.entries()) {
     let psid = await buscar_psid_usuarios_estoque(api_key);
     let reposta_1 = `Olá, ${qtd} ${operacao} . `;
     console.log(reposta_1);
@@ -211,7 +211,7 @@ async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
   }
 }
 
-async function cadastrar_usuario_da_api( psid, nome, cod_conf ) {
+async function cadastrar_usuario_da_api(psid, nome, cod_conf) {
   try {
     let cliente = await pool.connect();
     let resultado = await cliente.query(`insert into public.usuario_estoque ( psid, nome, api_key ) values ( ${psid}, ${nome}, ${cod_conf} );`);
@@ -224,7 +224,7 @@ async function cadastrar_usuario_da_api( psid, nome, cod_conf ) {
   }
 }
 
-async function cadastro_usuario_da_api(psid, params){
+async function cadastro_usuario_da_api(psid, params) {
   let nome = params.nome;
   let cod_conf = params.cod_conf;
 
@@ -235,74 +235,47 @@ async function cadastro_usuario_da_api(psid, params){
 }
 
 app.post('/cadastro', async (req, res) => {
-  let event = req.body.entry[0].messaging[i];
-  let psid = event.sender.id;
-  console.log("event");
-  console.log(event);
-  console.log("sender id");
-  console.log(psid);
-
-  // console.log("Req psid");
-  // console.log(req.body.originalDetectIntentRequest.payload);
-  // console.log("# PSID #");
-  // console.log(req.body.queryResult.fulfillmentMessages.text.text);
-  return res.status(200).send({ status: "ok" });
-});
-
-app.post('/cadastro_old', async (req, res) => {
-  console.log("v4");
 
   let intent_name = req.body.queryResult.intent.displayName;
   let params = req.body.queryResult.parameters;
 
-
-  //Cadastro de Usuário da API
   if (intent_name == "usuario.cadastro.estoque - custom") {
-    await cadastro_usuario_da_api(psid, params);  
-  }   
-
-  console.log(intent_name);
-
-  if (intent_name == "usuario.cadastro - custom") {
-    console.log("o usuário quer ativar o acompanhamento do estoque");
-  }
-
-  
-  //let psid = "3820305377987483";
-  console.log("#psid:" + psid);
-
-  console.log(req.body.queryResult.parameters);
-  let nome = req.body.queryResult.parameters.nome.name;
-  let num_oab = req.body.queryResult.parameters.num_oab;
-  let rf_oab = req.body.queryResult.parameters.rf_oab;
-  let text_response = "";
-
-  let context_nome = await getContext(psid);
-  if (context_nome != "sem_contexto") {
-    console.log("# contexto" + context_nome);
-    text_response = "Você já possui um cadastro!";
-
+    await cadastro_usuario_da_api(psid, params);
   } else {
-    let cadastrado = await cadastrar_usuario_completo(psid, num_oab, rf_oab, nome);
-    console.log("#res insert:" + cadastrado);
-    if (cadastrado == "usuario_cadatrado_com_sucesso") {
-      text_response = "Cadastrado com sucesso!";
-    } else {
-      text_response = "Você já possui um cadastro";
-    }
-  }
+    console.log("#Intent: Acompanhaemnto de processos #");
 
-  return res.json({
-    fulfillmentText: text_response,
-    source: 'webhook'
-  })
+    let psid = "3820305377987483";
+    console.log("#psid:" + psid);
+
+    console.log(req.body.queryResult.parameters);
+    let nome = req.body.queryResult.parameters.nome.name;
+    let num_oab = req.body.queryResult.parameters.num_oab;
+    let rf_oab = req.body.queryResult.parameters.rf_oab;
+    let text_response = "";
+
+    let context_nome = await getContext(psid);
+    if (context_nome != "sem_contexto") {
+      console.log("# contexto" + context_nome);
+      text_response = "Você já possui um cadastro!";
+
+    } else {
+      let cadastrado = await cadastrar_usuario_completo(psid, num_oab, rf_oab, nome);
+      console.log("#res insert:" + cadastrado);
+      if (cadastrado == "usuario_cadatrado_com_sucesso") {
+        text_response = "Cadastrado com sucesso!";
+      } else {
+        text_response = "Você já possui um cadastro";
+      }
+    }
+
+    return res.json({
+      fulfillmentText: text_response,
+      source: 'webhook'
+    })
+  }
 });
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
+
 
 //Datase testes
 app.get('/insert', async (req, res) => {

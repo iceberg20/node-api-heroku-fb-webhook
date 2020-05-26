@@ -1,6 +1,7 @@
 id enviado pelo dialofgflow
 acho que é o psid
 sender: { id: '3820305377987483' }
+req.body.originalDetectIntentRequest.payload
 
 {
    "responseId":"7cffc22a-67c4-4438-a02a-57c8c97aff8f-ab1309b0",
