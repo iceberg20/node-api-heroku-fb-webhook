@@ -235,10 +235,17 @@ async function cadastro_usuario_da_api(psid, params){
 }
 
 app.post('/cadastro', async (req, res) => {
-  console.log("Req psid");
-  console.log(req.body.originalDetectIntentRequest.payload.data);
-  console.log("# PSID #");
-  console.log(req.body.queryResult.fulfillmentMessages.text[0]);
+  let event = req.body.entry[0].messaging[i];
+  let psid = event.sender.id;
+  console.log("event");
+  console.log(event);
+  console.log("sender id");
+  console.log(psid);
+
+  // console.log("Req psid");
+  // console.log(req.body.originalDetectIntentRequest.payload);
+  // console.log("# PSID #");
+  // console.log(req.body.queryResult.fulfillmentMessages.text.text);
   return res.status(200).send({ status: "ok" });
 });
 
