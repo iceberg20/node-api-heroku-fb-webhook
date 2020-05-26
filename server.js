@@ -227,7 +227,7 @@ async function cadastrar_usuario_da_api(psid, nome, cod_conf) {
 }
 
 async function cadastro_usuario_da_api(psid, params) {
-  let nome = params.nome;
+  let nome = params.nome.name;
   let cod_conf = params.cod_conf;
 
   console.log("o usuário quer ativar o acompanhamento");
