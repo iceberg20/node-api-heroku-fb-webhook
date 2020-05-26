@@ -242,10 +242,11 @@ app.post('/cadastro', async (req, res) => {
   if (intent_name == "usuario.cadastro.estoque - custom") {
     await cadastro_usuario_da_api(psid, params);
   } else {
-    console.log("#Intent: Acompanhaemnto de processos #");
+    console.log("# Intent: Acompanhaemnto de processos #");
 
     let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
-    console.log("#psid:" + psid);
+
+    console.log("# psid:" + psid);
 
     console.log(req.body.queryResult.parameters);
     let nome = req.body.queryResult.parameters.nome.name;
