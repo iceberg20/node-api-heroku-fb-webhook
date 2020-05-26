@@ -157,14 +157,6 @@ app.get('/usuarios_api_ativos/', async function (req, res) {
   res.json(out);
 });
 
-
-
-function getPSID(req) {
-  let msg = req.body.entry[0].messaging[0];
-  let psid = msg.sender.id;
-  return psid;
-}
-
 async function getContext(psid) {
   try {
     let cliente = await pool.connect();
@@ -204,12 +196,6 @@ function sendTextMessage(sender, text) {
       console.log('Error: ', response.body.error)
     }
   })
-}
-
-async function get_psid(req) {
-  event = req.body.entry[0].messaging[0]
-  sender = event.sender.id
-  return sender;
 }
 
 async function cadastrar_usuario_completo(psid, num_oab, id_uf_oab, nome) {
@@ -252,7 +238,7 @@ app.post('/cadastro', async (req, res) => {
   console.log("Req");
   console.log(req);
   console.log("# PSID #");
-  console.log(req.query.psid);
+  req.body.queryResult.fulfillmentMessages
   return res.status(200).send({ status: "ok" });
 });
 
@@ -261,7 +247,7 @@ app.post('/cadastro_old', async (req, res) => {
 
   let intent_name = req.body.queryResult.intent.displayName;
   let params = req.body.queryResult.parameters;
-  let psid = getPSID(req);
+
 
   //Cadastro de Usuário da API
   if (intent_name == "usuario.cadastro.estoque - custom") {
