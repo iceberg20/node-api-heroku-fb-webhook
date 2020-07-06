@@ -254,7 +254,7 @@ app.post('/cadastro', async (req, res) => {
   if (intent_name == "usuario.cadastro.api - custom") {
     await cadastro_usuario_da_api(psid, params);
     return res.json({
-      fulfillmentText: "Acompanhamento de estoque ativo!",
+      fulfillmentText: "Acompanhamento api ativo!",
       source: 'webhook'
     })
   } else {
