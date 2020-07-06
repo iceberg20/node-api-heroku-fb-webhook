@@ -251,7 +251,7 @@ app.post('/cadastro', async (req, res) => {
   let params = req.body.queryResult.parameters;
   let psid = req.body.originalDetectIntentRequest.payload.data.sender.id;
 
-  if (intent_name == "usuario.cadastro.estoque - custom") {
+  if (intent_name == "usuario.cadastro.api - custom") {
     await cadastro_usuario_da_api(psid, params);
     return res.json({
       fulfillmentText: "Acompanhamento de estoque ativo!",
