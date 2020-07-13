@@ -8,7 +8,7 @@ var request = require('request');
 var fs = require('fs');
 var http = require('http');
 var str_con = process.env.STR_CON;
-var { token_tre, token_pagina_teste2 } = require('./token');
+var { token_tre, token_pagina_teste2 } = require('./config/token');
 
 // Version 13
 // DB poll config
